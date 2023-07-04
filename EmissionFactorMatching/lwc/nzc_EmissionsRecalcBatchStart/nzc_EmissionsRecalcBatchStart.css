@@ -1,0 +1,40 @@
+/**
+ * Created by mverigin on 12/16/22.
+ */
+.base-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.base-heading {
+    padding: 1rem 0;
+}
+
+.loading-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.loading-bar {
+    width: 75%;
+    height: 1rem;
+    background-color: lightgray;
+    border-radius: 2rem;
+    margin: 0.5rem 0;
+    overflow: hidden;
+}
+
+.loading-bar-inner {
+    width: 50%;
+    height: 100%;
+    background-color: forestgreen;
+}
+
+.loading-spinner-div {
+    position: relative;
+    margin: 1rem 0;
+}

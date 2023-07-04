@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>EmissionsFactorUpdateYear__c</fullName>
+        <externalId>false</externalId>
+        <label>Emissions Factor Update Year</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>MasterEmissionsSet__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>MasterEmissionsSet</label>
+        <referenceTo>ElectricityEmssnFctrSet</referenceTo>
+        <relationshipLabel>Electricity Emissions Factor Sets</relationshipLabel>
+        <relationshipName>Electricity_Emissions_Factor_Sets</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Recalculate_Emissions__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Recalculate Emissions</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+</CustomObject>

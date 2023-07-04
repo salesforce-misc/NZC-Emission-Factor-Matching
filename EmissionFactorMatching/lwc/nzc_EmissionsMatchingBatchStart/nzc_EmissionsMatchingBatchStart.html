@@ -1,0 +1,38 @@
+<!--
+ - Created by mverigin on 12/16/22.
+ -->
+
+<!-- Nzc Import Record Batch Start -->
+<template>
+    <lightning-card >
+        <div class='base-div'>
+            <p class='base-heading'>
+                Match energy use to emission sets by date
+            </p>
+            <template if:true={errorMsg}>
+                {errorMsg}
+            </template>
+            <template if:true={batchStatus}>
+                <div class='loading-container'>
+                    <p>
+                        {batchStatus}
+                    </p>
+                    <div class='loading-bar'>
+                        <div class='loading-bar-inner' style={loadingWidth}></div>
+                    </div>
+                    <p>
+                        {batchesProcessed}/{totalBatches}
+                    </p>
+                </div>
+            </template>
+            <template if:false={isBatchedStarted}>
+                <lightning-button label='Start batch' onclick={handleBatchStart}></lightning-button>
+            </template>
+            <template if:true={isBatchedStarted}>
+                <div class='loading-spinner-div'>
+                    <lightning-spinner ></lightning-spinner>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

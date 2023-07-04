@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>DateMatchingField__c</fullName>
+        <description>Field to match dates to emission factors on. Expecting field name ( StartDate EndDate ) or Midpoint</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Field to match dates to emission factors on. Expecting field name ( StartDate EndDate ) or Midpoint</inlineHelpText>
+        <label>Date Matching Field</label>
+        <length>50</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DoMatchEmissionsOnInsert__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Should the emissions matching happen on insert?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Should the emissions matching happen on insert?</inlineHelpText>
+        <label>Do match emissions on insert</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>DoMatchEmissionsOnUpdate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Should emissions matching happen on record update?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Should emissions matching happen on record update?</inlineHelpText>
+        <label>Do match emissions on update</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Emissions_Matching_Batch_Size__c</fullName>
+        <description>How many emissions records should be matched at once?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>How many emissions records should be matched at once?</inlineHelpText>
+        <label>Emissions Matching Batch Size</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Emissions_Recalc_Batch_Size__c</fullName>
+        <description>How many emission sets should be targeted at one time?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>How many emission sets should be targeted at one time?</inlineHelpText>
+        <label>Emissions Recalc Batch Size</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>doLog__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Enable apex debugging messages</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Enable apex debugging messages</inlineHelpText>
+        <label>do Log</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>NZC Emissions Matching Configuration</label>
+    <visibility>Public</visibility>
+</CustomObject>

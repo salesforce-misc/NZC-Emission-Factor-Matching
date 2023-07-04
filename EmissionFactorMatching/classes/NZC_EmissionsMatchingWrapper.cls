@@ -1,0 +1,87 @@
+/**
+ * Created by mverigin on 6/16/23.
+ */
+
+public with sharing virtual class NZC_EmissionsMatchingWrapper {
+
+    public String assetId;
+    public String energyUseRecordId;
+    public String objectName;
+    public String fuelType;
+
+    public Date dateToMatch;
+    public String masterEmissionsSetId;
+
+    public String matchedId;
+
+    public NZC_EmissionsMatchingWrapper(String assetId, String energyUseRecordId, Date dateToMatch, String fuelType) {
+        // used for all contexts outside of before record insert
+        this.assetId = assetId;
+        this.energyUseRecordId = energyUseRecordId;
+        this.dateToMatch = dateToMatch;
+        this.fuelType = fuelType;
+        this.objectName = getObjectTypeFromId(energyUseRecordId);
+    }
+
+    public NZC_EmissionsMatchingWrapper(String assetId, String generatedId, Date dateToMatch, String fuelType, String objectType) {
+        // used for record insert because of lack of Record Id
+        this.assetId = assetId;
+        this.energyUseRecordId = generatedId;// this is a temp generated Id just for linking updates back to a record
+        this.dateToMatch = dateToMatch;
+        this.fuelType = fuelType;
+        this.objectName = objectType;
+    }
+
+    public void attachMasterEmissionSetId(String masterEmissionSetId) {
+        this.masterEmissionsSetId = masterEmissionSetId;
+    }
+
+    public SObject createRecordUpdate() {
+        SObject recordUpdate = Schema.getGlobalDescribe().get(objectName).newSObject();
+        recordUpdate.put('Id', energyUseRecordId);
+
+        recordUpdate.put(getEnergyUseLookupFieldName(), matchedId);
+
+        return recordUpdate;
+    }
+
+    public String getParentAssetObjName() {
+        return NZC_EmissionsMatchingConstants.EUR_ASSET_OBJ_LOOKUP.get(objectName);
+    }
+
+    public String getObjectAssetLookupFieldName() {
+        String defaultFieldName = NZC_EmissionsMatchingConstants.FIELD_OTHER_ASSET_EMISSIONS;
+
+        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE && NZC_EmissionsMatchingConstants.ASSET_FUEL_SPECIFIC_FIELDS_MAP.get(fuelType) != null) {
+            defaultFieldName = NZC_EmissionsMatchingConstants.ASSET_FUEL_SPECIFIC_FIELDS_MAP.get(fuelType);
+        }
+
+        if (NZC_EmissionsMatchingConstants.ASSET_OBJECT_SPECIFIC_FIELDS_MAP.containsKey(objectName)) {
+            defaultFieldName = NZC_EmissionsMatchingConstants.ASSET_OBJECT_SPECIFIC_FIELDS_MAP.get(objectName);
+        }
+        return defaultFieldName;
+    }
+
+    public String getEnergyUseLookupFieldName() {
+        String defaultFieldName = NZC_EmissionsMatchingConstants.FIELD_EUR_OTHER_EMISSIONS;
+
+        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE && NZC_EmissionsMatchingConstants.EUR_FUEL_SPECIFIC_FIELDS_MAP.get(fuelType) != null) {
+            defaultFieldName = NZC_EmissionsMatchingConstants.EUR_FUEL_SPECIFIC_FIELDS_MAP.get(fuelType);
+        }
+
+        System.debug(objectName);
+        if (NZC_EmissionsMatchingConstants.EUR_OBJECT_SPECIFIC_FIELDS_MAP.containsKey(objectName)) {
+            defaultFieldName = NZC_EmissionsMatchingConstants.EUR_OBJECT_SPECIFIC_FIELDS_MAP.get(objectName);
+        }
+
+        System.debug(defaultFieldName);
+        return defaultFieldName;
+    }
+
+    private static String getObjectTypeFromId(String recordId) {
+        if (String.isNotBlank(recordId)) {
+            return ((Id)recordId).getSobjectType() + '';
+        }
+        return null;
+    }
+}
