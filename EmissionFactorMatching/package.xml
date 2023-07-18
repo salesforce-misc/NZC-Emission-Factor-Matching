@@ -14,7 +14,6 @@
         <members>NZC_EmissionsMatchingLogTest</members>
         <members>NZC_EmissionsMatchingMTD</members>
         <members>NZC_EmissionsMatchingMTDTest</members>
-        <members>NZC_EmissionsMatchingRecalcUtil</members>
         <members>NZC_EmissionsMatchingStationaryTggrTest</members>
         <members>NZC_EmissionsMatchingStationaryWpprTest</members>
         <members>NZC_EmissionsMatchingStationaryWrapper</members>
