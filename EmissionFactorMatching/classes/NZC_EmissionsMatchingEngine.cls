@@ -104,7 +104,7 @@ public with sharing class NZC_EmissionsMatchingEngine {
             String currentQuery = 'SELECT Id, EmissionsFactorUpdateYear__c, MasterEmissionsSet__c FROM ' + objectName
                     +' WHERE EmissionsFactorUpdateYear__c != NULL' +
                     ' AND MasterEmissionsSet__c IN: masterEmissionsSetIds' +
-                    ' ORDER BY EmissionsFactorUpdateYear__c ASC';
+                    ' ORDER BY EmissionsFactorUpdateYear__c ASC, CreatedDate ASC';
 
             for (SObject emissionsSet : Database.query(currentQuery)) {
                 if (!dateSortedEmissionsSetsMap.containsKey((String) emissionsSet.get('MasterEmissionsSet__c'))) {
