@@ -49,10 +49,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>NZC_EmissionsMatchingRecalcUtil</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>NZC_EmissionsMatchingStationaryTggrTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
