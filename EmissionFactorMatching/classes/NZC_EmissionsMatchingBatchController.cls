@@ -66,8 +66,7 @@ public with sharing class NZC_EmissionsMatchingBatchController {
         ];
 
         if (jobInfo != null && jobInfo.size() > 0) {
-            
-            Boolean isBatchRunning = jobInfo.get(0).Status != NZC_EmissionsMatchingConstants.STATUS_BATCH_COMPLETED;
+            Boolean isBatchRunning = jobInfo.get(0).Status != NZC_EmissionsMatchingConstants.STATUS_BATCH_COMPLETED && jobInfo.get(0).Status != NZC_EmissionsMatchingConstants.STATUS_BATCH_ABORTED;
             currentStatus = new currentBatchStatus(jobInfo.get(0).JobItemsProcessed, jobInfo.get(0).TotalJobItems, isBatchRunning, jobInfo.get(0).Status);
         }
 
