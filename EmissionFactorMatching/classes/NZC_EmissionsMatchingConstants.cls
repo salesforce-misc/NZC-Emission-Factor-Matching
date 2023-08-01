@@ -41,6 +41,7 @@ public with sharing class NZC_EmissionsMatchingConstants {
     public static final String EMISSIONS_MATCH_BATCH_NAME = 'NZC_EmissionsMatchingBatch';
     public static final String EMISSIONS_RECALC_BATCH_NAME = 'NZC_EmissionsSetRecalcBatch';
     public static final String STATUS_BATCH_COMPLETED = 'Completed';
+    public static final String STATUS_BATCH_ABORTED = 'Aborted';
     public static final String STATUS_BATCH_HOLDING = 'Holding';
 
     // asset field to get emissions Ids from for specific EUR type
