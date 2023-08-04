@@ -39,6 +39,32 @@
 			rollbackOnError="true"/>
 	</target>
 
+	<target name="deployProd">
+		<sf:deploy 
+			username="${sf.deployusername}" 
+			password="${sf.deploypassword}"
+			serverurl="${sf.deployurl}" 
+			maxPoll="${sf.maxPoll}" 
+			deployRoot="${sf.packagename}"
+			rollbackOnError="true" 
+			testLevel="RunSpecifiedTests" >
+		<runTest>NZC_EmissionsSetRecalcEngineTest</runTest>
+		<runTest>NZC_EmissionsSetRecalcBatchTest</runTest>
+		<runTest>NZC_EmissionsMatchingWrapperTest</runTest>
+		<runTest>NZC_EmissionsMatchingWasteWrapperTest</runTest>
+		<runTest>NZC_EmissionsMatchingWasteTggrTest</runTest>
+		<runTest>NZC_EmissionsMatchingVehicleWrapperTest</runTest>
+		<runTest>NZC_EmissionsMatchingVehicleTggrTest</runTest>
+		<runTest>NZC_EmissionsMatchingUtilTest</runTest>
+		<runTest>NZC_EmissionsMatchingStationaryWpprTest</runTest>
+		<runTest>NZC_EmissionsMatchingStationaryTggrTest</runTest>
+		<runTest>NZC_EmissionsMatchingBatchControllerTest</runTest>
+		<runTest>NZC_EmissionsMatchingBatchTest</runTest>
+		<runTest>NZC_EmissionsMatchingEngineTest</runTest>
+		<runTest>NZC_EmissionsMatchingLogTest</runTest>
+		<runTest>NZC_EmissionsMatchingMTDTest</runTest>
+		</sf:deploy >
+	</target>
 <!-- 
 To add test class run on deployment
 <sf:deploy  testLevel="RunSpecifiedTests">
