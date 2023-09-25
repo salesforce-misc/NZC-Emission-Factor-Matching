@@ -46,5 +46,33 @@ private class NZC_EmissionsMatchingHotelTriggerTest {
         Assert.isFalse(useWithriggerAfter.Recalculate_Emissions__c);
     }
 
-    //test update
+    @IsTest
+    static void testUpdate() {
+        Scope3EmssnSrc asset = [
+                SELECT Id, HotelStayEmssnFctrId
+                FROM Scope3EmssnSrc
+                LIMIT 1
+        ];
+
+        HotelStayEnrgyUse hotelUse = NZC_EmissionsMatchingDatafactory.createHotelEnergyUse( 'testUpdate', asset.Id, Date.today(), Date.today());
+        hotelUse.Recalculate_Emissions__c = false;
+        insert hotelUse;
+
+        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
+        hotelUse.Recalculate_Emissions__c = true;
+
+        Test.startTest();
+        update hotelUse;
+        Test.stopTest();
+
+        HotelStayEnrgyUse hotelUseTriggerAfter = [
+                SELECT HotelStayEmssnFctrId, Recalculate_Emissions__c
+                FROM HotelStayEnrgyUse
+                WHERE Id =: hotelUse.Id
+        ];
+
+        Assert.areNotEqual(hotelUse.HotelStayEmssnFctrId, hotelUseTriggerAfter.HotelStayEmssnFctrId, 'Factors should be different for emission matched record');
+        Assert.areNotEqual(hotelUse.Recalculate_Emissions__c, hotelUseTriggerAfter.Recalculate_Emissions__c);
+        Assert.isFalse(hotelUseTriggerAfter.Recalculate_Emissions__c);
+    }
 }

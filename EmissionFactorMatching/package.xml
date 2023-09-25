@@ -12,6 +12,7 @@
         <members>NZC_EmissionsMatchingEngineTest</members>
         <members>NZC_EmissionsMatchingHotelTriggerTest</members>
         <members>NZC_EmissionsMatchingHotelWrapper</members>
+        <members>NZC_EmissionsMatchingHotelWrapperTest</members>
         <members>NZC_EmissionsMatchingLog</members>
         <members>NZC_EmissionsMatchingLogTest</members>
         <members>NZC_EmissionsMatchingMTD</members>
@@ -88,11 +89,6 @@
         <members>nzc_EmissionsMatchingBatchStart</members>
         <members>nzc_EmissionsRecalcBatchStart</members>
         <name>LightningComponentBundle</name>
-    </types>
-    <types>
-        <members>Admin</members>
-        <members>NetZero Cloud Manager</members>
-        <name>Profile</name>
     </types>
     <version>55.0</version>
 </Package>
