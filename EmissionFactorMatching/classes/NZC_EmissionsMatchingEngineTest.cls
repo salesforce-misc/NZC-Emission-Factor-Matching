@@ -131,4 +131,58 @@ private class NZC_EmissionsMatchingEngineTest {
         String emptyMatchId = NZC_EmissionsMatchingEngine.matchingLogic(masterEmissionsId, Date.today(), new List<SObject>());
         Assert.areEqual(masterEmissionsId, emptyMatchId, 'Function should match master set by default');
     }
+
+    @IsTest
+    static void testCustomKeyMatching() {
+        String fuelType1 = 'Electricity';
+        String fuelType2 = 'Refrigerant';
+        String objectName = 'StnryAssetEnrgyUse';
+        String customTagField = 'Name';
+        String testMatchingKey = 'testKeyName';
+
+        NZC_EmissionsMatchingMTD.customMatchingRules = new Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt>{
+                NZC_EmissionsMatchingUtil.createHashKey(objectName,fuelType1) =>
+                        NZC_EmissionsMatchingDatafactory.createCustomMatchingRule(objectName, fuelType1, customTagField, customTagField),
+                NZC_EmissionsMatchingUtil.createHashKey(objectName,fuelType2) =>
+                        NZC_EmissionsMatchingDatafactory.createCustomMatchingRule(objectName, fuelType2, customTagField, customTagField)
+        };
+
+        insert NZC_EmissionsMatchingDatafactory.createElectricityEmissionSet(testMatchingKey, null, null);
+        insert NZC_EmissionsMatchingDatafactory.createRefrigerantEmissionSet(testMatchingKey, null, null);
+
+        // create settings for trigger to fire
+        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
+
+        List<StnryAssetEnrgyUse> energyUpdates = new List<StnryAssetEnrgyUse>();
+
+        for (StnryAssetEnrgyUse record : [
+                SELECT Id, ElectricityEmissionFactors.Name, RefrigerantEmssnFctr.Name
+                FROM StnryAssetEnrgyUse
+                WHERE FuelType =: fuelType1
+                OR FuelType =: fuelType2
+        ]) {
+            Assert.areNotEqual(testMatchingKey, record.RefrigerantEmssnFctr.Name, 'records should be default match');
+            Assert.areNotEqual(testMatchingKey, record.ElectricityEmissionFactors.Name,'records should be default match');
+            record.Name = testMatchingKey;
+            energyUpdates.add(record);
+        }
+
+        Test.startTest();
+        update energyUpdates;
+        Test.stopTest();
+
+        for (StnryAssetEnrgyUse record : [
+                SELECT Id, ElectricityEmissionFactors.Name, RefrigerantEmssnFctr.Name, FuelType
+                FROM StnryAssetEnrgyUse
+                WHERE FuelType =: fuelType1
+                OR FuelType =: fuelType2
+        ]) {
+            if (record.FuelType == fuelType1) {
+                Assert.areEqual(testMatchingKey, record.ElectricityEmissionFactors.Name, 'records should be rematched');
+            }
+            if (record.FuelType == fuelType2) {
+                Assert.areEqual(testMatchingKey, record.RefrigerantEmssnFctr.Name, 'records should be rematched');
+            }
+        }
+    }
 }

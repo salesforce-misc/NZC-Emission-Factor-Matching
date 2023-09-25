@@ -10,24 +10,29 @@ public with sharing class NZC_EmissionsMatchingConstants {
     public static final String OBJECT_STATIONARY_ENERGY_USE = 'StnryAssetEnrgyUse';
     public static final String OBJECT_VEHICLE_ENERGY_USE = 'VehicleAssetEnrgyUse';
     public static final String OBJECT_WASTE_USE = 'GeneratedWaste';
+    public static final String OBJECT_HOTEL_USE = 'HotelStayEnrgyUse';
     public static final String OBJECT_WATER_USE = 'StnryAssetWaterActvty';
 
     public static final String OBJECT_OTHER_EMISSION_SET = 'OtherEmssnFctrSet';
     public static final String OBJECT_ELECTRICITY_SET = 'ElectricityEmssnFctrSet';
     public static final String OBJECT_REFRIGERANT_SET = 'RefrigerantEmssnFctr';
     public static final String OBJECT_WASTE_SET = 'WstDispoEmssnFctrSet';
+    public static final String OBJECT_HOTEL_SET = 'HotelStayEmssnFctr';
 
     public static final String OBJECT_STATIONARY_ASSET = 'StnryAssetEnvrSrc';
     public static final String OBJECT_VEHICLE_ASSET = 'VehicleAssetEmssnSrc';
+    public static final String OBJECT_SCOPE3_ASSET = 'Scope3EmssnSrc';
 
     public static final String FIELD_STATIONARY_ASSET_ELECTRIC_EMISSIONS = 'ElectricityEmssnFctrId';
     public static final String FIELD_STATIONARY_ASSET_REFRIGERANT_EMISSIONS = 'RefrigerantEmssnFctrId';
     public static final String FIELD_STATIONARY_ASSET_WASTE_EMISSIONS = 'WstDispoEmssnFctrSetId';
+    public static final String FIELD_HOTEL_ASSET_EMISSIONS = 'HotelStayEmssnFctrId';
     public static final String FIELD_OTHER_ASSET_EMISSIONS = 'OtherEmssnFctrId';
 
     public static final String FIELD_EUR_ELECTRIC_EMISSIONS = 'ElectricityEmissionFactorsId';
     public static final String FIELD_EUR_REFRIGERANT_EMISSIONS = 'RefrigerantEmssnFctrId';
     public static final String FIELD_EUR_WASTE_EMISSIONS = 'WstDispoEmssnFctrId';
+    public static final String FIELD_EUR_HOTEL_EMISSIONS = 'HotelStayEmssnFctrId';
     public static final String FIELD_EUR_OTHER_EMISSIONS = 'OtherEmssnFctrId';
 
     public static final String FIELD_EUR_STARTDATE = 'StartDate';
@@ -46,10 +51,11 @@ public with sharing class NZC_EmissionsMatchingConstants {
 
     // asset field to get emissions Ids from for specific EUR type
     public static final Map<String, String> ASSET_OBJECT_SPECIFIC_FIELDS_MAP = new Map<String, String>{
-            OBJECT_WASTE_USE => FIELD_STATIONARY_ASSET_WASTE_EMISSIONS
+            OBJECT_WASTE_USE => FIELD_STATIONARY_ASSET_WASTE_EMISSIONS,
+            OBJECT_HOTEL_USE => FIELD_HOTEL_ASSET_EMISSIONS
     };
 
-    // field to get emissions Ids from on stationary asset
+    // field to get emissions Ids from on stationary asset based on fuel type
     public static final Map<String, String> ASSET_FUEL_SPECIFIC_FIELDS_MAP = new Map<String, String>{
             FUEL_TYPE_ELECTRICITY => FIELD_STATIONARY_ASSET_ELECTRIC_EMISSIONS,
             FUEL_TYPE_REFRIGERANT => FIELD_STATIONARY_ASSET_REFRIGERANT_EMISSIONS
@@ -57,7 +63,8 @@ public with sharing class NZC_EmissionsMatchingConstants {
 
     // where to put emissions for EUR object type
     public static final Map<String, String> EUR_OBJECT_SPECIFIC_FIELDS_MAP = new Map<String, String>{
-            OBJECT_WASTE_USE => FIELD_EUR_WASTE_EMISSIONS
+            OBJECT_WASTE_USE => FIELD_EUR_WASTE_EMISSIONS,
+            OBJECT_HOTEL_USE => FIELD_EUR_HOTEL_EMISSIONS
     };
 
     // where to put emissions Ids on stationary EUR
@@ -70,7 +77,8 @@ public with sharing class NZC_EmissionsMatchingConstants {
     public static final Map<String, String> EUR_ASSET_OBJ_LOOKUP = new Map<String, String>{
             OBJECT_STATIONARY_ENERGY_USE => OBJECT_STATIONARY_ASSET,
             OBJECT_VEHICLE_ENERGY_USE => OBJECT_VEHICLE_ASSET,
-            OBJECT_WASTE_USE => OBJECT_STATIONARY_ASSET
+            OBJECT_WASTE_USE => OBJECT_STATIONARY_ASSET,
+            OBJECT_HOTEL_USE => OBJECT_SCOPE3_ASSET
     };
 
     // used to jump from emissions set record to lookup field name for dynamic query
@@ -78,5 +86,17 @@ public with sharing class NZC_EmissionsMatchingConstants {
             OBJECT_ELECTRICITY_SET => FIELD_EUR_ELECTRIC_EMISSIONS,
             OBJECT_REFRIGERANT_SET => FIELD_EUR_REFRIGERANT_EMISSIONS,
             OBJECT_OTHER_EMISSION_SET => FIELD_EUR_OTHER_EMISSIONS
+    };
+
+    // used to know what emissions object we are looking for from energy use fuel type
+    public static final Map<String, String> ENERGY_USE_EMISSIONS_SET_NAME_MAP = new Map<String, String>{
+            FUEL_TYPE_ELECTRICITY => OBJECT_ELECTRICITY_SET,
+            FUEL_TYPE_REFRIGERANT => OBJECT_REFRIGERANT_SET
+    };
+
+    // used to know what emissions object we are looking for from energy use type
+    public static final Map<String, String> EUR_OBJECT_EMISSIONS_SET_NAME_MAP = new Map<String, String>{
+            OBJECT_WASTE_USE => OBJECT_WASTE_SET,
+            OBJECT_HOTEL_USE => OBJECT_HOTEL_SET
     };
 }

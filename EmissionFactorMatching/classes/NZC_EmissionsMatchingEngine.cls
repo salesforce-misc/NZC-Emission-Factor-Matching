@@ -17,12 +17,22 @@ public with sharing class NZC_EmissionsMatchingEngine {
     // sorted emissions date ranges by Master set Id => List<child emissions sets date ordered>
     private Map<String, List<SObject>> dateSortedEmissionsSetsMap;
 
+    // custom matching values on EUR to try find ( example value would be country code or ZIP code )
+    private final Set<String> customMatchingKeys;
+    // used to keep track of what emissions objects we need to query for custom key matching and the hash keys to link it to custom MTD
+    private final Map<String, Set<Integer>> customMatchingEmissionsObjectNames;
+    // used for custom key matching emissions sets
+    private final Map<Integer, String> customMatchingKeyToMasterSetIdMap;
+
     public NZC_EmissionsMatchingEngine() {
         masterSetAssetObjectTypeAndFieldsMap = new Map<String, Set<String>>();
         matchTargets = new List<NZC_EmissionsMatchingWrapper>();
         assetIdsSet = new Set<String>();
         emissionsSetObjectNames = new Set<String>();
         masterEmissionsSetIdsByAssetHash = new Map<Integer, String>();
+        customMatchingKeys = new Set<String>();
+        customMatchingEmissionsObjectNames = new Map<String, Set<Integer>>();
+        customMatchingKeyToMasterSetIdMap = new Map<Integer, String>();
         NZC_EmissionsMatchingLog.log('starting engine');
     }
 
@@ -36,12 +46,19 @@ public with sharing class NZC_EmissionsMatchingEngine {
     }
 
     public void process() {
+        // get each master emissions set from asset and add to hashmap of assetId + field name : masterSetId
         loadAssetDataExtractMasterSetIds();
 
+        // if custom key matching is present load get the master set Ids
+        getCustomMatchingMasterSets();
+
+        // add master set to each record
         attachMasterEmissionsSetToWrapper();
 
+        // gets all emissions sets date ordered from loadAssetDataExtractMasterSetIds master Set ids
         getDateSortedEmissionFactorSets();
 
+        // uses master set Id connected to wrapper to find a closer date match if possible
         matchClosestEmission();
     }
 
@@ -66,21 +83,36 @@ public with sharing class NZC_EmissionsMatchingEngine {
 
             masterSetAssetObjectTypeAndFieldsMap.get(matchWrapper.getParentAssetObjName()).add(matchWrapper.getObjectAssetLookupFieldName());
         }
+
+        if (String.isNotBlank(matchWrapper.customMatchingValue)) {
+            if (!customMatchingEmissionsObjectNames.containsKey(matchWrapper.getEmissionsFactorObjectName())) {
+                customMatchingEmissionsObjectNames.put(matchWrapper.getEmissionsFactorObjectName(), new Set<Integer>());
+            }
+
+            customMatchingKeys.add(matchWrapper.customMatchingValue);
+
+            customMatchingEmissionsObjectNames.get(matchWrapper.getEmissionsFactorObjectName()).add(
+                    NZC_EmissionsMatchingUtil.createHashKey(
+                            new List<String>{matchWrapper.objectName, matchWrapper.fuelType
+            }));
+        }
     }
 
     private void loadAssetDataExtractMasterSetIds() {
+        // queries required assets and pulls emissions set Ids from lookup fields required
+        // example {"StnryAssetEnvrSrc" : [ "WstDispoEmssnFctrSetId", "RefrigerantEmssnFctrId", "ElectricityEmssnFctrId", "OtherEmssnFctrId" ]}
         NZC_EmissionsMatchingLog.log('query assets with ', masterSetAssetObjectTypeAndFieldsMap);
         for (String objectName : masterSetAssetObjectTypeAndFieldsMap.keySet()) {
-            // for each asset type ( 2 possibilities )
             String query = 'SELECT Id, ' + String.join(new List<String>(masterSetAssetObjectTypeAndFieldsMap.get(objectName)), ',')
                     + ' FROM ' + objectName+ ' WHERE Id IN:assetIdsSet';
             for (SObject returnedAsset : Database.query(query)) {
                 NZC_EmissionsMatchingLog.log(returnedAsset);
                 for (String fieldName : masterSetAssetObjectTypeAndFieldsMap.get(objectName)) {
-                    // extract each emissions field ( 3 possibilities )
                     if (returnedAsset.get(fieldName) != null) {
-                        Integer hashKey = (returnedAsset.Id + fieldName).hashCode();
+                        Integer hashKey = NZC_EmissionsMatchingUtil.createHashKey(returnedAsset.Id, fieldName);
+                        // grab each emissions Id from asset
                         masterEmissionsSetIdsByAssetHash.put(hashKey, (String) returnedAsset.get(fieldName));
+                        // get name of emissions set object
                         emissionsSetObjectNames.add(((Id) returnedAsset.get(fieldName)).getSobjectType() + '');
                     }
                 }
@@ -89,16 +121,67 @@ public with sharing class NZC_EmissionsMatchingEngine {
         NZC_EmissionsMatchingLog.log('emissions set by hash', masterEmissionsSetIdsByAssetHash);
     }
 
+    private void getCustomMatchingMasterSets() {
+        if (customMatchingEmissionsObjectNames.isEmpty()) return;
+        NZC_EmissionsMatchingLog.log('custom matching by field key object names:', customMatchingEmissionsObjectNames.keySet());
+        Set<String> customMatchValues = customMatchingKeys;
+
+        for (String objectName : customMatchingEmissionsObjectNames.keySet()) {
+            List<String> fieldsNeeded = new List<String>();
+            List<String> whereClauses = new List<String>();
+            for (Integer hashKey : customMatchingEmissionsObjectNames.get(objectName)) {
+                // get fields needed from custom MTD
+                fieldsNeeded.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c);
+                whereClauses.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c + ' IN: customMatchValues');
+            }
+            String query = 'SELECT Id, ' +
+                    String.join(fieldsNeeded, ',') + ' FROM ' + objectName+ ' WHERE ' +
+                    String.join(whereClauses, ' OR') + ' AND MasterEmissionsSet__c = NULL';
+            for (SObject emissionSetQueried : Database.query(query)) {
+                // for later query we add emissions set to assetId emissionId map for date matching
+                masterEmissionsSetIdsByAssetHash.put(
+                        NZC_EmissionsMatchingUtil.createHashKey(new List<String>{emissionSetQueried.Id}),
+                        emissionSetQueried.Id);
+                for (String field : fieldsNeeded) {
+                    String recordsValue = (String) emissionSetQueried.get(field);
+                    if (String.isNotBlank(recordsValue)) {
+                        // store emissions sets by object by field value : emission set Id
+                        customMatchingKeyToMasterSetIdMap.put(
+                                NZC_EmissionsMatchingUtil.createHashKey(new List<String>{objectName, recordsValue}),
+                                emissionSetQueried.Id
+                                );
+                    }
+                }
+
+            }
+            NZC_EmissionsMatchingLog.log('custom key emissions matched ',customMatchingKeyToMasterSetIdMap);
+        }
+    }
+
     private void attachMasterEmissionsSetToWrapper() {
+        NZC_EmissionsMatchingLog.log('attaching master set to wrapper');
         for (NZC_EmissionsMatchingWrapper wrapper : matchTargets) {
-            Integer hashKey = (wrapper.assetId + wrapper.getObjectAssetLookupFieldName()).hashCode();
+            Integer hashKey = NZC_EmissionsMatchingUtil.createHashKey(wrapper.assetId, wrapper.getObjectAssetLookupFieldName());
             wrapper.masterEmissionsSetId = masterEmissionsSetIdsByAssetHash.get(hashKey);
+            if (wrapper.doesUseCustomEmissionsMatching()) {
+                NZC_EmissionsMatchingLog.log('custom key match used', wrapper.customMatchingValue);
+                Integer customKeyMatchingHash = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{
+                        wrapper.getEmissionsFactorObjectName(), wrapper.customMatchingValue
+                });
+                if (customMatchingKeyToMasterSetIdMap.containsKey(customKeyMatchingHash)) {
+                    wrapper.masterEmissionsSetId = customMatchingKeyToMasterSetIdMap.get(customKeyMatchingHash);
+                    // add key as matched Id. if a better date match is found later it will overwrite this
+                    wrapper.matchedId = wrapper.masterEmissionsSetId;
+                    NZC_EmissionsMatchingLog.log('custom key match added', wrapper.matchedId);
+                }
+            }
         }
     }
 
     private void getDateSortedEmissionFactorSets() {
         dateSortedEmissionsSetsMap = new Map<String, List<SObject>>();
         NZC_EmissionsMatchingLog.log('get date sorted sets', emissionsSetObjectNames);
+        // example value of emissionsSetObjectNames values [ "WstDispoEmssnFctrSet", "RefrigerantEmssnFctr", "ElectricityEmssnFctrSet", "OtherEmssnFctrSet" ]
         Set<String> masterEmissionsSetIds = new Set<String>(masterEmissionsSetIdsByAssetHash.values());
         for (String objectName : emissionsSetObjectNames) {
             String currentQuery = 'SELECT Id, EmissionsFactorUpdateYear__c, MasterEmissionsSet__c FROM ' + objectName

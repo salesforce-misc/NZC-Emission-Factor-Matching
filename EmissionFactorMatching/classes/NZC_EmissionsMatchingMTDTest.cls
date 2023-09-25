@@ -15,7 +15,7 @@ private class NZC_EmissionsMatchingMTDTest {
         Assert.isTrue(NZC_EmissionsMatchingMTD.emissionsMatchBatchSize > NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE, 'Expecting a match batch size set');
         Assert.isTrue(NZC_EmissionsMatchingMTD.emissionsRecalcBatchSize > NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE, 'Expecting a recalc batch size set');
         Assert.isNotNull(NZC_EmissionsMatchingMTD.matchingConfig, 'no setting created');
-
+        Assert.isTrue(NZC_EmissionsMatchingMTD.allowCustomTagMatching, 'expected custom tag matching');
     }
 
     @IsTest
@@ -26,5 +26,6 @@ private class NZC_EmissionsMatchingMTDTest {
         Assert.isTrue(NZC_EmissionsMatchingMTD.doLog, 'Expecting logging enabled by default');
         Assert.areEqual(NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE, NZC_EmissionsMatchingMTD.emissionsMatchBatchSize, 'Default not set correctly');
         Assert.areEqual(NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE, NZC_EmissionsMatchingMTD.emissionsRecalcBatchSize, 'Default not set correctly');
+        Assert.isFalse(NZC_EmissionsMatchingMTD.allowCustomTagMatching, 'expected custom tag matching default false');
     }
 }

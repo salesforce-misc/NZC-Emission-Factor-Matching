@@ -4,6 +4,14 @@
 
 public with sharing class NZC_EmissionsMatchingUtil {
 
+    public static Integer createHashKey(String assetId, String fieldName) {
+        return createHashKey(new List<String>{assetId, fieldName});
+    }
+
+    public static Integer createHashKey(List<String> keys) {
+        return String.join(keys, '').hashCode();
+    }
+
     public static Date getDateForWrapper(SObject energyuseRecord) {
         if (NZC_EmissionsMatchingMTD.dateMatchingField == NZC_EmissionsMatchingConstants.FIELD_EUR_MIDPOINT) {
             Date startDate = (Date) energyuseRecord.get(NZC_EmissionsMatchingConstants.FIELD_EUR_STARTDATE);
@@ -19,7 +27,7 @@ public with sharing class NZC_EmissionsMatchingUtil {
         for (SObject energyUse : incomingEnergyList) {
             // get wrapper type to create
             String objectType = String.valueOf(energyUse.getSObjectType());
-
+            System.debug('object type ' + objectType);
             // can't use switch case with variables
             if (objectType == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE) {
                 completedWrapper.add(new NZC_EmissionsMatchingStationaryWrapper((StnryAssetEnrgyUse) energyUse));
@@ -29,6 +37,9 @@ public with sharing class NZC_EmissionsMatchingUtil {
             }
             if (objectType == NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE) {
                 completedWrapper.add(new NZC_EmissionsMatchingWasteWrapper((GeneratedWaste) energyUse));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingHotelWrapper((HotelStayEnrgyUse) energyUse));
             }
         }
         NZC_EmissionsMatchingLog.log('generated wrappers', completedWrapper.size());
@@ -53,7 +64,9 @@ public with sharing class NZC_EmissionsMatchingUtil {
             if (objectType == NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE) {
                 completedWrapper.add(new NZC_EmissionsMatchingWasteWrapper((GeneratedWaste) generatedIdMap.get(generatedRecordId), generatedRecordId));
             }
-
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingHotelWrapper((HotelStayEnrgyUse) generatedIdMap.get(generatedRecordId), generatedRecordId));
+            }
         }
         NZC_EmissionsMatchingLog.log('generated wrappers with temp id', completedWrapper.size());
 

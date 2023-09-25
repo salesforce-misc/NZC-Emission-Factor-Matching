@@ -16,7 +16,7 @@ private class NZC_EmissionsSetRecalcBatchTest {
         ];
 
         Test.startTest();
-        Database.executeBatch(new NZC_EmissionsSetRecalcBatch(NZC_EmissionsMatchingConstants.OBJECT_REFRIGERANT_SET));
+        Database.executeBatch(new NZC_EmissionsSetRecalcBatch());
         Test.stopTest();
 
         Integer elligibleWasteSetsAfter = [

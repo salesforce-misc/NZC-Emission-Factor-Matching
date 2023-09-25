@@ -10,6 +10,8 @@
         <members>NZC_EmissionsMatchingDatafactory</members>
         <members>NZC_EmissionsMatchingEngine</members>
         <members>NZC_EmissionsMatchingEngineTest</members>
+        <members>NZC_EmissionsMatchingHotelTriggerTest</members>
+        <members>NZC_EmissionsMatchingHotelWrapper</members>
         <members>NZC_EmissionsMatchingLog</members>
         <members>NZC_EmissionsMatchingLogTest</members>
         <members>NZC_EmissionsMatchingMTD</members>
@@ -34,6 +36,7 @@
         <name>ApexClass</name>
     </types>
     <types>
+	<members>NZC_EmissionsMatchingHotelTrigger</members>
         <members>NZC_EmissionsMatchingStationaryTrigger</members>
         <members>NZC_EmissionsMatchingVehicleTrigger</members>
         <members>NZC_EmissionsMatchingWasteTrigger</members>
@@ -44,6 +47,11 @@
         <members>ElectricityEmssnFctrSet.MasterEmissionsSet__c</members>
         <members>ElectricityEmssnFctrSet.Recalculate_Emissions__c</members>
         <members>GeneratedWaste.Recalculate_Emissions__c</members>
+        <members>HotelStayEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>HotelStayEmssnFctr.MasterEmissionsSet__c</members>
+        <members>HotelStayEmssnFctr.Recalculate_Emissions__c</members>
+        <members>HotelStayEnrgyUse.Recalculate_Emissions__c</members>
+	<members>NZC_EmissionsMatchingConfig__c.AllowCustomTagMatching__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DateMatchingField__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DoMatchEmissionsOnInsert__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DoMatchEmissionsOnUpdate__c</members>
@@ -61,11 +69,20 @@
         <members>WstDispoEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
         <members>WstDispoEmssnFctrSet.MasterEmissionsSet__c</members>
         <members>WstDispoEmssnFctrSet.Recalculate_Emissions__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.EmissionsSetFieldToMatch__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.EnergyUseFieldToMatch__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.FuelType__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.ObjectAppliesTo__c</members>
         <name>CustomField</name>
     </types>
     <types>
         <members>NZC_EmissionsMatchingConfig__c</members>
+	<members>NZC_EmissionsMatchingCustomMatch__mdt</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt-NZC_EmissionsMatchingCustomMatch Layout</members>
+        <name>Layout</name>
     </types>
     <types>
         <members>nzc_EmissionsMatchingBatchStart</members>
