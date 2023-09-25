@@ -63,6 +63,8 @@
 		<runTest>NZC_EmissionsMatchingEngineTest</runTest>
 		<runTest>NZC_EmissionsMatchingLogTest</runTest>
 		<runTest>NZC_EmissionsMatchingMTDTest</runTest>
+		<runTest>NZC_EmissionsMatchingHotelTriggerTest</runTest>
+		<runTest>NZC_EmissionsMatchingHotelWrapperTest</runTest>
 		</sf:deploy >
 	</target>
 <!-- 

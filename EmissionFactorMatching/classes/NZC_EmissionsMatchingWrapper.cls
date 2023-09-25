@@ -13,6 +13,7 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
     public String masterEmissionsSetId;
 
     public String matchedId;
+    public String customMatchingValue;
 
     public NZC_EmissionsMatchingWrapper(String assetId, String energyUseRecordId, Date dateToMatch, String fuelType) {
         // used for all contexts outside of before record insert
@@ -30,6 +31,17 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
         this.dateToMatch = dateToMatch;
         this.fuelType = fuelType;
         this.objectName = objectType;
+    }
+
+    public Boolean doesUseCustomEmissionsMatching() {
+        return NZC_EmissionsMatchingMTD.customMatchingRules.containsKey(NZC_EmissionsMatchingUtil.createHashKey(new List<String>{objectName, fuelType}));
+    }
+
+    public void attachCustomMatchingField(SObject energyRecord) {
+        if (NZC_EmissionsMatchingMTD.allowCustomTagMatching && doesUseCustomEmissionsMatching()) {
+            String matchField = NZC_EmissionsMatchingMTD.customMatchingRules.get(NZC_EmissionsMatchingUtil.createHashKey(new List<String>{objectName, fuelType})).EnergyUseFieldToMatch__c;
+            customMatchingValue = (String) energyRecord.get(matchField);
+        }
     }
 
     public void attachMasterEmissionSetId(String masterEmissionSetId) {
@@ -69,12 +81,24 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
             defaultFieldName = NZC_EmissionsMatchingConstants.EUR_FUEL_SPECIFIC_FIELDS_MAP.get(fuelType);
         }
 
-        System.debug(objectName);
         if (NZC_EmissionsMatchingConstants.EUR_OBJECT_SPECIFIC_FIELDS_MAP.containsKey(objectName)) {
             defaultFieldName = NZC_EmissionsMatchingConstants.EUR_OBJECT_SPECIFIC_FIELDS_MAP.get(objectName);
         }
 
-        System.debug(defaultFieldName);
+        return defaultFieldName;
+    }
+
+    public String getEmissionsFactorObjectName() {
+        String defaultFieldName = NZC_EmissionsMatchingConstants.OBJECT_OTHER_EMISSION_SET;
+
+        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE && NZC_EmissionsMatchingConstants.ENERGY_USE_EMISSIONS_SET_NAME_MAP.get(fuelType) != null) {
+            defaultFieldName = NZC_EmissionsMatchingConstants.ENERGY_USE_EMISSIONS_SET_NAME_MAP.get(fuelType);
+        }
+
+        if (NZC_EmissionsMatchingConstants.EUR_OBJECT_EMISSIONS_SET_NAME_MAP.containsKey(objectName)) {
+            defaultFieldName = NZC_EmissionsMatchingConstants.EUR_OBJECT_EMISSIONS_SET_NAME_MAP.get(objectName);
+        }
+
         return defaultFieldName;
     }
 

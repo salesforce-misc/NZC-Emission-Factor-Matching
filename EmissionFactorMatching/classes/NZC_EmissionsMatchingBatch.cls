@@ -33,5 +33,9 @@ public with sharing class NZC_EmissionsMatchingBatch implements Database.Batchab
             // start waste next
             Database.executeBatch(new NZC_EmissionsMatchingBatch(NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE));
         }
+        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE) {
+            // start hotel next
+            Database.executeBatch(new NZC_EmissionsMatchingBatch(NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE));
+        }
     }
 }

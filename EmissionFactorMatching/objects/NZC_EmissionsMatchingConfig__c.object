@@ -3,6 +3,16 @@
     <customSettingsType>List</customSettingsType>
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>AllowCustomTagMatching__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Should custom matching based on fields be allowed? ( overrides emissions factors from asset )</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Should custom matching based on fields be allowed? ( overrides emissions factors from asset )</inlineHelpText>
+        <label>AllowCustomTagMatching</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>DateMatchingField__c</fullName>
         <description>Field to match dates to emission factors on. Expecting field name ( StartDate EndDate ) or Midpoint</description>
         <externalId>false</externalId>

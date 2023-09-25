@@ -3,7 +3,6 @@
     <fields>
         <fullName>Recalculate_Emissions__c</fullName>
         <defaultValue>true</defaultValue>
-        <description>Recalculate Emissions</description>
         <externalId>false</externalId>
         <label>Recalculate Emissions</label>
         <trackHistory>false</trackHistory>

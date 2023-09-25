@@ -62,6 +62,24 @@ public class NZC_EmissionsMatchingDatafactory {
         insert vehicleList;
     }
 
+    public static void setupHotel(String name) {
+        Integer yearsBack = 5;
+
+        List<HotelStayEmssnFctr> otherSetList = createHotelEmissionsSetMatrix(yearsBack, name + 'otherSet');
+        Scope3EmssnSrc asset = createHotelAsset(name, otherSetList.get(otherSetList.size()-1).Id);
+        insert asset;
+
+        List<HotelStayEnrgyUse> hotelUseList = new List<HotelStayEnrgyUse>();
+
+        for (Integer i = 0; i < yearsBack; i++) {
+            Date start = Date.today().addMonths((i+1) * -12);
+            Date endDate = Date.today().addMonths((i+1) * -10);
+            hotelUseList.add(createHotelEnergyUse( name + i, asset.Id, start, endDate));
+        }
+
+        insert hotelUseList;
+    }
+
     public static OtherEmssnFctrSet createOtherEmissionSet(String name, Date relevanceDate, String masterEmissionsSet) {
         return new OtherEmssnFctrSet(
                 Name = name,
@@ -116,6 +134,30 @@ public class NZC_EmissionsMatchingDatafactory {
         List<RefrigerantEmssnFctr> childSets = new List<RefrigerantEmssnFctr>();
         for (Integer i = 0; i < amount; i++) {
             childSets.add(createRefrigerantEmissionSet(setName + 'child' + i,Date.today().addMonths((i+1) * -12), masterSet.Id));
+        }
+        insert childSets;
+        childSets.add(masterSet);
+
+        return childSets;
+    }
+
+    public static HotelStayEmssnFctr createHotelEmissionsSet(String name, Date relevanceDate, String masterEmissionsSet) {
+        return new HotelStayEmssnFctr(
+                Name = name,
+                HotelStayEmssnInKgCo2eNight = 10,
+                EmissionsFactorUpdateYear__c = relevanceDate,
+                MasterEmissionsSet__c = masterEmissionsSet,
+                Recalculate_Emissions__c = true
+        );
+    }
+
+    public static List<HotelStayEmssnFctr> createHotelEmissionsSetMatrix(Integer amount, String setName) {
+        HotelStayEmssnFctr masterSet = createHotelEmissionsSet(setName, null, null);
+        insert masterSet;
+
+        List<HotelStayEmssnFctr> childSets = new List<HotelStayEmssnFctr>();
+        for (Integer i = 0; i < amount; i++) {
+            childSets.add(createHotelEmissionsSet(setName + 'child' + i,Date.today().addMonths((i+1) * -12), masterSet.Id));
         }
         insert childSets;
         childSets.add(masterSet);
@@ -242,6 +284,15 @@ public class NZC_EmissionsMatchingDatafactory {
         return createdRecord;
     }
 
+    public static Scope3EmssnSrc createHotelAsset(String name, String hotelEmissionsId) {
+        Scope3EmssnSrc createdRecord = new Scope3EmssnSrc(
+                Name = name,
+                HotelStayEmssnFctrId = hotelEmissionsId
+        );
+
+        return createdRecord;
+    }
+
     public static VehicleAssetEnrgyUse createVehicleEnergyUse( String name, String vehicleAssetId, Date startDate, Date endDate) {
         return new VehicleAssetEnrgyUse(
                 Name = name,
@@ -255,6 +306,18 @@ public class NZC_EmissionsMatchingDatafactory {
         );
     }
 
+    public static HotelStayEnrgyUse createHotelEnergyUse( String name, String scope3AssetId, Date startDate, Date endDate) {
+        return new HotelStayEnrgyUse(
+                Name = name,
+                Scope3EmssnSrcId = scope3AssetId,
+                StayNightsCount = 5,
+                RoomCount = 5,
+                StartDate = startDate,
+                EndDate = endDate,
+                Recalculate_Emissions__c = true
+        );
+    }
+
     public static void createEmissionsSettings() {
         NZC_EmissionsMatchingMTD.matchingConfig = new NZC_EmissionsMatchingConfig__c(
                 DoMatchEmissionsOnInsert__c = true,
@@ -262,7 +325,17 @@ public class NZC_EmissionsMatchingDatafactory {
                 DateMatchingField__c = NZC_EmissionsMatchingConstants.FIELD_EUR_STARTDATE,
                 doLog__c = true,
                 Emissions_Matching_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE + 1,
-                Emissions_Recalc_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE + 1
+                Emissions_Recalc_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE + 1,
+                allowCustomTagMatching__c = true
+        );
+    }
+
+    public static NZC_EmissionsMatchingCustomMatch__mdt createCustomMatchingRule(String objectName, String fuelType, String eurField, String emissionsField) {
+        return new NZC_EmissionsMatchingCustomMatch__mdt(
+                ObjectAppliesTo__c = objectName,
+                FuelType__c = fuelType,
+                EnergyUseFieldToMatch__c = eurField,
+                EmissionsSetFieldToMatch__c = emissionsField
         );
     }
 }

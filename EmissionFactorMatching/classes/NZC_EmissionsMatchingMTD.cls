@@ -63,6 +63,19 @@ public with sharing class NZC_EmissionsMatchingMTD {
         }
     }
 
+    public static Boolean allowCustomTagMatching {
+        get {
+            allowCustomTagMatching = false;
+            if (matchingConfig != null && matchingConfig.get('allowCustomTagMatching__c') != null) allowCustomTagMatching = matchingConfig.allowCustomTagMatching__c;
+
+            return allowCustomTagMatching;
+        }
+
+        set {
+            if (Test.isRunningTest()) allowCustomTagMatching = value;
+        }
+    }
+
     public static Integer emissionsMatchBatchSize {
         get {
             emissionsMatchBatchSize = NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE;
@@ -83,6 +96,29 @@ public with sharing class NZC_EmissionsMatchingMTD {
             return emissionsRecalcBatchSize;
         }
         set;
+    }
+
+    public static Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt> customMatchingRules {
+        get {
+            if (customMatchingRules == null) {
+                customMatchingRules = getCustomMatchingRules();
+            }
+            return customMatchingRules;
+        }
+        set {
+            if (Test.isRunningTest()) customMatchingRules = value;
+        }
+    }
+
+    @TestVisible
+    private static Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt> getCustomMatchingRules() {
+        Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt> customMatchingInfo = new Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt>();
+
+        for (NZC_EmissionsMatchingCustomMatch__mdt rule : NZC_EmissionsMatchingCustomMatch__mdt.getAll().values()) {
+            customMatchingInfo.put(NZC_EmissionsMatchingUtil.createHashKey(rule.ObjectAppliesTo__c,rule.FuelType__c), rule);
+        }
+
+        return customMatchingInfo;
     }
 
     @TestVisible
