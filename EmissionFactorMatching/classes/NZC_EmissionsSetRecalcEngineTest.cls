@@ -42,8 +42,11 @@ private class NZC_EmissionsSetRecalcEngineTest {
         update matchingEUR;
 
         NZC_EmissionsSetRecalcEngine engine = new NZC_EmissionsSetRecalcEngine();
+
+        Test.startTest();
         engine.loadSetIds(emissionSets.values());
         engine.processRecords();
+        Test.stopTest();
 
         List<SObject> updatedEurs = new List<SObject>();
         updatedEurs.addAll([
