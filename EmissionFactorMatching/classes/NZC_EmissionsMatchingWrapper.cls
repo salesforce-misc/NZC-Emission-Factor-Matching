@@ -49,7 +49,7 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
     }
 
     public SObject createRecordUpdate() {
-        SObject recordUpdate = Schema.getGlobalDescribe().get(objectName).newSObject();
+        SObject recordUpdate = NZC_EmissionsMatchingUtil.globalDescribe.get(objectName).newSObject();
         recordUpdate.put('Id', energyUseRecordId);
 
         recordUpdate.put(getEnergyUseLookupFieldName(), matchedId);
@@ -74,6 +74,7 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
 
         if (NZC_EmissionsMatchingMTD.customLookupRules.containsKey(NZC_EmissionsMatchingUtil.createHashKey(objectName, fuelType))) {
             // using custom lookup
+            System.debug('looking for custom lookup');
             defaultFieldName = NZC_EmissionsMatchingMTD.customLookupRules.get(NZC_EmissionsMatchingUtil.createHashKey(objectName, fuelType));
         }
 

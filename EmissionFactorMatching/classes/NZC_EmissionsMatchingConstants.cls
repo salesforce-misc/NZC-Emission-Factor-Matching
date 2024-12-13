@@ -99,4 +99,10 @@ public with sharing class NZC_EmissionsMatchingConstants {
             OBJECT_WASTE_USE => OBJECT_WASTE_SET,
             OBJECT_HOTEL_USE => OBJECT_HOTEL_SET
     };
+
+    // used to know what objects have master set field
+    public static final Set<String> EXCLUDE_MASTER_SET_LIST = new Set<String>{
+            OBJECT_OTHER_EMISSION_SET, OBJECT_ELECTRICITY_SET, OBJECT_REFRIGERANT_SET,
+            OBJECT_WASTE_SET, OBJECT_HOTEL_SET
+    };
 }
