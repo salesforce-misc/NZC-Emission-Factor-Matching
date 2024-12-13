@@ -71,6 +71,12 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
         if (NZC_EmissionsMatchingConstants.ASSET_OBJECT_SPECIFIC_FIELDS_MAP.containsKey(objectName)) {
             defaultFieldName = NZC_EmissionsMatchingConstants.ASSET_OBJECT_SPECIFIC_FIELDS_MAP.get(objectName);
         }
+
+        if (NZC_EmissionsMatchingMTD.customLookupRules.containsKey(NZC_EmissionsMatchingUtil.createHashKey(objectName, fuelType))) {
+            // using custom lookup
+            defaultFieldName = NZC_EmissionsMatchingMTD.customLookupRules.get(NZC_EmissionsMatchingUtil.createHashKey(objectName, fuelType));
+        }
+
         return defaultFieldName;
     }
 

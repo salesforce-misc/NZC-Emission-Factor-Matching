@@ -85,6 +85,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NZC_EmissionsMatchingTDLosses</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingTDLossesTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NZC_EmissionsMatchingUtil</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -140,6 +148,18 @@
         <apexClass>NZC_EmissionsSetRecalcEngineTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingCustomLookups__mdt</name>
+    </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingCustomMatch__mdt</name>
+    </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingTDCloning__mdt</name>
+    </customMetadataTypeAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>ElectricityEmssnFctrSet.EmissionsFactorUpdateYear__c</field>
@@ -213,6 +233,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>StnryAssetEnrgyUse.Recalculate_Emissions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>StnryAssetEnrgyUse.TDLossParent__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>StnryAssetEnvrSrc.T_D_losses_emissions_set__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

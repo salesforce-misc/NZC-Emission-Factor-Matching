@@ -2,10 +2,6 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>EmissionFactorMatching</fullName>
     <types>
-        <members>EmissionsMatching</members>
-        <name>PermissionSet</name>
-    </types>
-    <types>
         <members>NZC_EmissionMatchingInsertWrapper</members>
         <members>NZC_EmissionsMatchingBatch</members>
         <members>NZC_EmissionsMatchingBatchController</members>
@@ -27,6 +23,8 @@
         <members>NZC_EmissionsMatchingStationaryTggrTest</members>
         <members>NZC_EmissionsMatchingStationaryWpprTest</members>
         <members>NZC_EmissionsMatchingStationaryWrapper</members>
+        <members>NZC_EmissionsMatchingTDLosses</members>
+        <members>NZC_EmissionsMatchingTDLossesTest</members>
         <members>NZC_EmissionsMatchingUtil</members>
         <members>NZC_EmissionsMatchingUtilTest</members>
         <members>NZC_EmissionsMatchingVehicleTggrTest</members>
@@ -60,16 +58,23 @@
         <members>HotelStayEmssnFctr.Recalculate_Emissions__c</members>
         <members>HotelStayEnrgyUse.Recalculate_Emissions__c</members>
         <members>NZC_EmissionsMatchingConfig__c.AllowCustomTagMatching__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.AllowTransmissionDistribution__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DateMatchingField__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DoMatchEmissionsOnInsert__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DoMatchEmissionsOnUpdate__c</members>
         <members>NZC_EmissionsMatchingConfig__c.Emissions_Matching_Batch_Size__c</members>
         <members>NZC_EmissionsMatchingConfig__c.Emissions_Recalc_Batch_Size__c</members>
         <members>NZC_EmissionsMatchingConfig__c.doLog__c</members>
+        <members>NZC_EmissionsMatchingCustomLookups__mdt.FuelAppliesFor__c</members>
+        <members>NZC_EmissionsMatchingCustomLookups__mdt.LookupToSearch__c</members>
+        <members>NZC_EmissionsMatchingCustomLookups__mdt.ObjectAppliesFor__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt.EmissionsSetFieldToMatch__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt.EnergyUseFieldToMatch__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt.FuelType__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt.ObjectAppliesTo__c</members>
+        <members>NZC_EmissionsMatchingTDCloning__mdt.FieldsToClone__c</members>
+        <members>NZC_EmissionsMatchingTDCloning__mdt.FuelType__c</members>
+        <members>NZC_EmissionsMatchingTDCloning__mdt.ObjectName__c</members>
         <members>OtherEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
         <members>OtherEmssnFctrSet.MasterEmissionsSet__c</members>
         <members>OtherEmssnFctrSet.Recalculate_Emissions__c</members>
@@ -77,6 +82,8 @@
         <members>RefrigerantEmssnFctr.MasterEmissionsSet__c</members>
         <members>RefrigerantEmssnFctr.Recalculate_Emissions__c</members>
         <members>StnryAssetEnrgyUse.Recalculate_Emissions__c</members>
+        <members>StnryAssetEnrgyUse.TDLossParent__c</members>
+        <members>StnryAssetEnvrSrc.T_D_losses_emissions_set__c</members>
         <members>VehicleAssetEnrgyUse.Recalculate_Emissions__c</members>
         <members>WstDispoEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
         <members>WstDispoEmssnFctrSet.MasterEmissionsSet__c</members>
@@ -85,7 +92,9 @@
     </types>
     <types>
         <members>NZC_EmissionsMatchingConfig__c</members>
+        <members>NZC_EmissionsMatchingCustomLookups__mdt</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt</members>
+        <members>NZC_EmissionsMatchingTDCloning__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -93,7 +102,9 @@
         <name>Flow</name>
     </types>
     <types>
+        <members>NZC_EmissionsMatchingCustomLookups__mdt-NZC_EmissionsMatchingCustomLookups Layout</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt-NZC_EmissionsMatchingCustomMatch Layout</members>
+        <members>NZC_EmissionsMatchingTDCloning__mdt-NZC_EmissionsMatchingTDCloning Layout</members>
         <name>Layout</name>
     </types>
     <types>

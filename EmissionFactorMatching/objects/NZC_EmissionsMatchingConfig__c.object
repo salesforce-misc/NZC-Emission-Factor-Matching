@@ -13,6 +13,16 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>AllowTransmissionDistribution__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Should transmissions distribution records be allowed to create?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Should transmissions distribution records be allowed to create?</inlineHelpText>
+        <label>Allow Transmission Distribution</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>DateMatchingField__c</fullName>
         <description>Field to match dates to emission factors on. Expecting field name ( StartDate EndDate ) or Midpoint</description>
         <externalId>false</externalId>

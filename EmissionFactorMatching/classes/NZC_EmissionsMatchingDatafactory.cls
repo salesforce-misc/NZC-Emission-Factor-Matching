@@ -326,7 +326,8 @@ public class NZC_EmissionsMatchingDatafactory {
                 doLog__c = true,
                 Emissions_Matching_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE + 1,
                 Emissions_Recalc_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE + 1,
-                allowCustomTagMatching__c = true
+                allowCustomTagMatching__c = true,
+                AllowTransmissionDistribution__c = true
         );
     }
 
@@ -336,6 +337,22 @@ public class NZC_EmissionsMatchingDatafactory {
                 FuelType__c = fuelType,
                 EnergyUseFieldToMatch__c = eurField,
                 EmissionsSetFieldToMatch__c = emissionsField
+        );
+    }
+
+    public static NZC_EmissionsMatchingCustomLookups__mdt createCustomLookupRule(String objectName, String fuelName, String lookupFieldName) {
+        return new NZC_EmissionsMatchingCustomLookups__mdt(
+                ObjectAppliesFor__c = objectName,
+                FuelAppliesFor__c = fuelName,
+                LookupToSearch__c = lookupFieldName
+        );
+    }
+
+    public static NZC_EmissionsMatchingTDCloning__mdt createTDCloningRule(String objectName, String fuelName, String fieldsToClone) {
+        return new NZC_EmissionsMatchingTDCloning__mdt(
+                ObjectName__c = objectName,
+                FuelType__c = fuelName,
+                FieldsToClone__c = fieldsToClone
         );
     }
 }

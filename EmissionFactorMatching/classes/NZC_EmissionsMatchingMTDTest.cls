@@ -16,6 +16,7 @@ private class NZC_EmissionsMatchingMTDTest {
         Assert.isTrue(NZC_EmissionsMatchingMTD.emissionsRecalcBatchSize > NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE, 'Expecting a recalc batch size set');
         Assert.isNotNull(NZC_EmissionsMatchingMTD.matchingConfig, 'no setting created');
         Assert.isTrue(NZC_EmissionsMatchingMTD.allowCustomTagMatching, 'expected custom tag matching');
+        Assert.isTrue(NZC_EmissionsMatchingMTD.allowTDrecords, 'expected TD record creation');
     }
 
     @IsTest
@@ -27,5 +28,14 @@ private class NZC_EmissionsMatchingMTDTest {
         Assert.areEqual(NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE, NZC_EmissionsMatchingMTD.emissionsMatchBatchSize, 'Default not set correctly');
         Assert.areEqual(NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE, NZC_EmissionsMatchingMTD.emissionsRecalcBatchSize, 'Default not set correctly');
         Assert.isFalse(NZC_EmissionsMatchingMTD.allowCustomTagMatching, 'expected custom tag matching default false');
+        Assert.isFalse(NZC_EmissionsMatchingMTD.allowTDrecords, 'expected TD record default false');
+    }
+
+    @IsTest
+    static void testMTDQueries() {
+
+        Assert.areNotEqual(null, NZC_EmissionsMatchingMTD.customMatchingRules, 'expected a non null map to exist');
+        Assert.areNotEqual(null, NZC_EmissionsMatchingMTD.customLookupRules, 'expected a non null map to exist');
+        Assert.areNotEqual(null, NZC_EmissionsMatchingMTD.tdSplittingRules, 'expected a non null map to exist');
     }
 }
