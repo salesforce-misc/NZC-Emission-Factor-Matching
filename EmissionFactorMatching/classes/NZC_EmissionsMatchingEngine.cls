@@ -164,7 +164,6 @@ public with sharing class NZC_EmissionsMatchingEngine {
             Integer hashKey = NZC_EmissionsMatchingUtil.createHashKey(wrapper.assetId, wrapper.getObjectAssetLookupFieldName());
             wrapper.masterEmissionsSetId = masterEmissionsSetIdsByAssetHash.get(hashKey);
             wrapper.matchedId = wrapper.masterEmissionsSetId;
-
             if (wrapper.doesUseCustomEmissionsMatching()) {
                 NZC_EmissionsMatchingLog.log('custom key match used', wrapper.customMatchingValue);
                 Integer customKeyMatchingHash = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{
@@ -185,7 +184,6 @@ public with sharing class NZC_EmissionsMatchingEngine {
         NZC_EmissionsMatchingLog.log('get date sorted sets', emissionsSetObjectNames);
         // example value of emissionsSetObjectNames values [ "WstDispoEmssnFctrSet", "RefrigerantEmssnFctr", "ElectricityEmssnFctrSet", "OtherEmssnFctrSet" ]
         Set<String> masterEmissionsSetIds = new Set<String>(masterEmissionsSetIdsByAssetHash.values());
-        System.debug('master set ids ' + masterEmissionsSetIds);
         for (String objectName : emissionsSetObjectNames) {
             String currentQuery = 'SELECT Id, EmissionsFactorUpdateYear__c, MasterEmissionsSet__c FROM ' + objectName
                     +' WHERE EmissionsFactorUpdateYear__c != NULL' +

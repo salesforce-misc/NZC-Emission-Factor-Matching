@@ -72,7 +72,20 @@ public with sharing class NZC_EmissionsMatchingMTD {
         }
 
         set {
-            if (Test.isRunningTest()) allowCustomTagMatching = value;
+            allowCustomTagMatching = value;
+        }
+    }
+
+    public static Boolean allowAdvancedMatching {
+        get {
+            allowAdvancedMatching = false;
+            if (matchingConfig != null && matchingConfig.get('allowCustomTagMatching__c') != null) allowAdvancedMatching = matchingConfig.AllowAdvancedMatching__c;
+
+            return allowAdvancedMatching;
+        }
+
+        set {
+            if (Test.isRunningTest()) allowAdvancedMatching = value;
         }
     }
 
@@ -83,6 +96,16 @@ public with sharing class NZC_EmissionsMatchingMTD {
             if (matchingConfig != null && matchingConfig.get('Emissions_Matching_Batch_Size__c') != null) emissionsMatchBatchSize = Integer.valueOf(matchingConfig.get('Emissions_Matching_Batch_Size__c'));
 
             return emissionsMatchBatchSize;
+        }
+        set;
+    }
+
+    public static Boolean allowTDrecords {
+        get {
+            allowTDrecords = false;
+            if (matchingConfig != null && matchingConfig.get('AllowTransmissionDistribution__c') != null) allowTDrecords = matchingConfig.AllowTransmissionDistribution__c;
+
+            return allowTDrecords;
         }
         set;
     }
@@ -98,16 +121,6 @@ public with sharing class NZC_EmissionsMatchingMTD {
         set;
     }
 
-    public static Boolean allowTDrecords {
-        get {
-            allowTDrecords = false;
-            if (matchingConfig != null && matchingConfig.get('AllowTransmissionDistribution__c') != null) allowTDrecords = matchingConfig.AllowTransmissionDistribution__c;
-
-            return allowTDrecords;
-        }
-        set;
-    }
-
     public static Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt> customMatchingRules {
         get {
             if (customMatchingRules == null) {
@@ -115,9 +128,7 @@ public with sharing class NZC_EmissionsMatchingMTD {
             }
             return customMatchingRules;
         }
-        set {
-            if (Test.isRunningTest()) customMatchingRules = value;
-        }
+        set;
     }
 
     public static Map<Integer, String> customLookupRules {
@@ -142,6 +153,16 @@ public with sharing class NZC_EmissionsMatchingMTD {
         set {
             if (Test.isRunningTest()) tdSplittingRules = value;
         }
+    }
+
+    public static Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>> advancedMatchingRules {
+        get {
+            if (advancedMatchingRules == null) {
+                advancedMatchingRules = getAdvancedMatchingRules();
+            }
+            return advancedMatchingRules;
+        }
+        set;
     }
 
     @TestVisible
@@ -175,6 +196,21 @@ public with sharing class NZC_EmissionsMatchingMTD {
         }
 
         return tdLookupInfo;
+    }
+
+    @TestVisible
+    private static Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>> getAdvancedMatchingRules() {
+        Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>> advanceMatchingInfo = new Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>>();
+
+        for (NZC_EmissionsMatchingAdvanceMatch__mdt rule : NZC_EmissionsMatchingAdvanceMatch__mdt.getAll().values()) {
+            if (!advanceMatchingInfo.containsKey(rule.ObjectAppliesTo__c)) {
+                advanceMatchingInfo.put(rule.ObjectAppliesTo__c, new List<NZC_EmissionsMatchingAdvanceMatch__mdt>());
+            }
+
+            advanceMatchingInfo.get(rule.ObjectAppliesTo__c).add(rule);
+        }
+
+        return advanceMatchingInfo;
     }
 
     @TestVisible

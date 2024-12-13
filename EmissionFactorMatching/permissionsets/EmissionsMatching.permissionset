@@ -5,6 +5,22 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvancedMatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvancedMatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvancedMatchWpr</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvcMatchWprTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NZC_EmissionsMatchingBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -150,6 +166,10 @@
     </classAccesses>
     <customMetadataTypeAccesses>
         <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingAdvanceMatch__mdt</name>
+    </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
         <name>NZC_EmissionsMatchingCustomLookups__mdt</name>
     </customMetadataTypeAccesses>
     <customMetadataTypeAccesses>
@@ -198,6 +218,31 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>HotelStayEnrgyUse.Recalculate_Emissions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.AliasHashStorage__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.AliasHashkeys__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.LookupOverride__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.PrimaryHashStorage__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.PrimaryHashkeys__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -267,4 +312,17 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>EmissionsMatching</label>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>NZC_EmissionsMatchingMatrix__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <tabSettings>
+        <tab>NZC_EmissionsMatchingMatrix__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

@@ -60,6 +60,11 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
                 getWasteRecords();
             }
 
+            if (objectName == NZC_EmissionsMatchingConstants.OBJECT_HOTEL_SET) {
+                defaultMatch = false;
+                getHotelRecords();
+            }
+
             if (defaultMatch) {
                 getVehicleRecords();
                 getStationaryRecords(objectName);
@@ -123,6 +128,18 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
                 SELECT Id
                 FROM VehicleAssetEnrgyUse
                 WHERE OtherEmssnFctrId IN : emissionsMatchingSet
+        ]);
+        NZC_EmissionsMatchingLog.log('retrieved');
+    }
+
+    private void getHotelRecords() {
+        NZC_EmissionsMatchingLog.log('getting hotel');
+        Set<Id> emissionsMatchingSet = objectNameToSetIdMap.get(NZC_EmissionsMatchingConstants.OBJECT_HOTEL_SET);
+
+        recordsToUpdate.addAll([
+                SELECT Id
+                FROM HotelStayEnrgyUse
+                WHERE HotelStayEmssnFctrId IN : emissionsMatchingSet
         ]);
         NZC_EmissionsMatchingLog.log('retrieved');
     }

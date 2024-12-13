@@ -274,6 +274,7 @@ public class NZC_EmissionsMatchingDatafactory {
 
     public static VehicleAssetEmssnSrc createVehiclAsset(String name, String otherEmissionsId) {
         Id recordTypeId = VehicleAssetEmssnSrc.SObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('Fleet_Vehicle')?.getRecordTypeId();
+
         VehicleAssetEmssnSrc createdRecord = new VehicleAssetEmssnSrc(
                 Name = name,
                 OtherEmssnFctrId =  otherEmissionsId
@@ -327,7 +328,8 @@ public class NZC_EmissionsMatchingDatafactory {
                 Emissions_Matching_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE + 1,
                 Emissions_Recalc_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE + 1,
                 allowCustomTagMatching__c = true,
-                AllowTransmissionDistribution__c = true
+                AllowTransmissionDistribution__c = true,
+                AllowAdvancedMatching__c = true
         );
     }
 

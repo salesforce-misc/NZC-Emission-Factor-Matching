@@ -55,6 +55,7 @@ private class NZC_EmissionsMatchingTDLossesTest {
         Test.startTest();
         insert energyUse;
         Test.stopTest();
+        System.debug(JSON.serializePretty(NZC_EmissionsMatchingMTD.customLookupRules));
 
         Integer eurCountAfter = [
                 SELECT COUNT()

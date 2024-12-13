@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Used to house rules around Advanced matching, primarily used on asset records.</description>
+    <fields>
+        <fullName>HashFields__c</fullName>
+        <description>Comma separated list of API field names used for searching or to be matched against</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Comma separated list of API field names used for searching or to be matched against</inlineHelpText>
+        <label>Fields Used</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Hash_Destination__c</fullName>
+        <description>The destination field on record to store the quick search value</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>The destination field on record to store the quick search value</inlineHelpText>
+        <label>Quick Search Storage Field</label>
+        <length>150</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LookupDestination__c</fullName>
+        <description>The quick search api field name on the target object to match against</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>The quick search api field name on the target object to match against</inlineHelpText>
+        <label>Quick Search Target Field</label>
+        <length>150</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LookupToPopulate__c</fullName>
+        <description>The lookup field on source object to populate if a match is found</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>The lookup field on source object to populate if a match is found</inlineHelpText>
+        <label>Lookup To Populate</label>
+        <length>150</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ObjectAppliesTo__c</fullName>
+        <description>The object API name this matching rule applies to</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>The object API name this matching rule applies to</inlineHelpText>
+        <label>Object Applies To</label>
+        <length>150</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ScreeningField__c</fullName>
+        <description>Api field name on trigger object used to screen out records from processing ( Boolean )</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Api field name on trigger object used to screen out records from processing ( Boolean )</inlineHelpText>
+        <label>Screening Field</label>
+        <length>150</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SecondaryMatchFieldTarget__c</fullName>
+        <description>Secondary match field to compare after initial match. Field should exist on target object. Use API name</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Secondary match field to compare after initial match. Field should exist on target object. Use API name</inlineHelpText>
+        <label>Secondary Match Target Field</label>
+        <length>150</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SecondaryMatchSourceField__c</fullName>
+        <description>Secondary field to compare after initial match is found. Field name should exist on triggering record. Use API name</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Secondary field to compare after initial match is found. Field name should exist on triggering record. Use API name</inlineHelpText>
+        <label>Secondary Match Source Field</label>
+        <length>150</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>NZC Emissions Matching Advance Match</label>
+    <listViews>
+        <fullName>All_Records_All_Fields</fullName>
+        <columns>MasterLabel</columns>
+        <columns>DeveloperName</columns>
+        <columns>HashFields__c</columns>
+        <columns>LookupToPopulate__c</columns>
+        <columns>ObjectAppliesTo__c</columns>
+        <columns>Hash_Destination__c</columns>
+        <columns>LookupDestination__c</columns>
+        <columns>ScreeningField__c</columns>
+        <columns>SecondaryMatchFieldTarget__c</columns>
+        <columns>SecondaryMatchSourceField__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All Records All Fields</label>
+    </listViews>
+    <pluralLabel>NZC Emissions Matching Advance Match</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

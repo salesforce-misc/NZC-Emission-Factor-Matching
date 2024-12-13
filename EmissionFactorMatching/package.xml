@@ -3,6 +3,10 @@
     <fullName>EmissionFactorMatching</fullName>
     <types>
         <members>NZC_EmissionMatchingInsertWrapper</members>
+        <members>NZC_EmissionsMatchingAdvancedMatch</members>
+        <members>NZC_EmissionsMatchingAdvancedMatchTest</members>
+        <members>NZC_EmissionsMatchingAdvancedMatchWpr</members>
+        <members>NZC_EmissionsMatchingAdvcMatchWprTest</members>
         <members>NZC_EmissionsMatchingBatch</members>
         <members>NZC_EmissionsMatchingBatchController</members>
         <members>NZC_EmissionsMatchingBatchControllerTest</members>
@@ -43,6 +47,7 @@
     </types>
     <types>
         <members>NZC_EmissionsMatchingHotelTrigger</members>
+        <members>NZC_EmissionsMatchingMatrixTrigger</members>
         <members>NZC_EmissionsMatchingStationaryTrigger</members>
         <members>NZC_EmissionsMatchingVehicleTrigger</members>
         <members>NZC_EmissionsMatchingWasteTrigger</members>
@@ -57,6 +62,15 @@
         <members>HotelStayEmssnFctr.MasterEmissionsSet__c</members>
         <members>HotelStayEmssnFctr.Recalculate_Emissions__c</members>
         <members>HotelStayEnrgyUse.Recalculate_Emissions__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.HashFields__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.Hash_Destination__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.LookupDestination__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.LookupToPopulate__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.ObjectAppliesTo__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.ScreeningField__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.SecondaryMatchFieldTarget__c</members>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.SecondaryMatchSourceField__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.AllowAdvancedMatching__c</members>
         <members>NZC_EmissionsMatchingConfig__c.AllowCustomTagMatching__c</members>
         <members>NZC_EmissionsMatchingConfig__c.AllowTransmissionDistribution__c</members>
         <members>NZC_EmissionsMatchingConfig__c.DateMatchingField__c</members>
@@ -72,6 +86,12 @@
         <members>NZC_EmissionsMatchingCustomMatch__mdt.EnergyUseFieldToMatch__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt.FuelType__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt.ObjectAppliesTo__c</members>
+        <members>NZC_EmissionsMatchingMatrix__c.AliasHashStorage__c</members>
+        <members>NZC_EmissionsMatchingMatrix__c.AliasHashkeys__c</members>
+        <members>NZC_EmissionsMatchingMatrix__c.ApplicableObject__c</members>
+        <members>NZC_EmissionsMatchingMatrix__c.LookupOverride__c</members>
+        <members>NZC_EmissionsMatchingMatrix__c.PrimaryHashStorage__c</members>
+        <members>NZC_EmissionsMatchingMatrix__c.PrimaryHashkeys__c</members>
         <members>NZC_EmissionsMatchingTDCloning__mdt.FieldsToClone__c</members>
         <members>NZC_EmissionsMatchingTDCloning__mdt.FuelType__c</members>
         <members>NZC_EmissionsMatchingTDCloning__mdt.ObjectName__c</members>
@@ -91,19 +111,27 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt</members>
         <members>NZC_EmissionsMatchingConfig__c</members>
         <members>NZC_EmissionsMatchingCustomLookups__mdt</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt</members>
+        <members>NZC_EmissionsMatchingMatrix__c</members>
         <members>NZC_EmissionsMatchingTDCloning__mdt</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>NZC_EmissionsMatchingMatrix__c</members>
+        <name>CustomTab</name>
     </types>
     <types>
         <members>Link_Electricity_Sets</members>
         <name>Flow</name>
     </types>
     <types>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt-NZC Emissions Matching Advance Match Layout</members>
         <members>NZC_EmissionsMatchingCustomLookups__mdt-NZC_EmissionsMatchingCustomLookups Layout</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt-NZC_EmissionsMatchingCustomMatch Layout</members>
+        <members>NZC_EmissionsMatchingMatrix__c-Emissions Matching Matrix Layout</members>
         <members>NZC_EmissionsMatchingTDCloning__mdt-NZC_EmissionsMatchingTDCloning Layout</members>
         <name>Layout</name>
     </types>
@@ -111,6 +139,12 @@
         <members>nzc_EmissionsMatchingBatchStart</members>
         <members>nzc_EmissionsRecalcBatchStart</members>
         <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>NZC_EmissionsMatchingAdvanceMatch__mdt.All_Records_All_Fields</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.All_Records_with_All_Fields</members>
+        <members>NZC_EmissionsMatchingMatrix__c.All</members>
+        <name>ListView</name>
     </types>
     <types>
         <members>EmissionsMatching</members>
