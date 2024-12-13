@@ -5,6 +5,22 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvancedMatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvancedMatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvancedMatchWpr</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingAdvcMatchWprTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NZC_EmissionsMatchingBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -85,6 +101,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NZC_EmissionsMatchingTDLosses</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NZC_EmissionsMatchingTDLossesTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NZC_EmissionsMatchingUtil</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -140,6 +164,22 @@
         <apexClass>NZC_EmissionsSetRecalcEngineTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingAdvanceMatch__mdt</name>
+    </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingCustomLookups__mdt</name>
+    </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingCustomMatch__mdt</name>
+    </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>NZC_EmissionsMatchingTDCloning__mdt</name>
+    </customMetadataTypeAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>ElectricityEmssnFctrSet.EmissionsFactorUpdateYear__c</field>
@@ -182,6 +222,31 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.AliasHashStorage__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.AliasHashkeys__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.LookupOverride__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.PrimaryHashStorage__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NZC_EmissionsMatchingMatrix__c.PrimaryHashkeys__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>OtherEmssnFctrSet.EmissionsFactorUpdateYear__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -217,6 +282,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>StnryAssetEnrgyUse.TDLossParent__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>StnryAssetEnvrSrc.T_D_losses_emissions_set__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>VehicleAssetEnrgyUse.Recalculate_Emissions__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -237,4 +312,17 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>EmissionsMatching</label>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>NZC_EmissionsMatchingMatrix__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <tabSettings>
+        <tab>NZC_EmissionsMatchingMatrix__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

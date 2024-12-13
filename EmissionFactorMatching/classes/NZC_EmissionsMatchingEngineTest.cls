@@ -152,6 +152,8 @@ private class NZC_EmissionsMatchingEngineTest {
 
         // create settings for trigger to fire
         NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
+        // turn off advanced match to prevent issues
+        NZC_EmissionsMatchingMTD.allowAdvancedMatching = false;
 
         List<StnryAssetEnrgyUse> energyUpdates = new List<StnryAssetEnrgyUse>();
 

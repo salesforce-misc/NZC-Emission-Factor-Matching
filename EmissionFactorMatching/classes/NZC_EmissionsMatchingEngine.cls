@@ -163,6 +163,7 @@ public with sharing class NZC_EmissionsMatchingEngine {
         for (NZC_EmissionsMatchingWrapper wrapper : matchTargets) {
             Integer hashKey = NZC_EmissionsMatchingUtil.createHashKey(wrapper.assetId, wrapper.getObjectAssetLookupFieldName());
             wrapper.masterEmissionsSetId = masterEmissionsSetIdsByAssetHash.get(hashKey);
+            wrapper.matchedId = wrapper.masterEmissionsSetId;
             if (wrapper.doesUseCustomEmissionsMatching()) {
                 NZC_EmissionsMatchingLog.log('custom key match used', wrapper.customMatchingValue);
                 Integer customKeyMatchingHash = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{

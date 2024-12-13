@@ -72,7 +72,20 @@ public with sharing class NZC_EmissionsMatchingMTD {
         }
 
         set {
-            if (Test.isRunningTest()) allowCustomTagMatching = value;
+            allowCustomTagMatching = value;
+        }
+    }
+
+    public static Boolean allowAdvancedMatching {
+        get {
+            allowAdvancedMatching = false;
+            if (matchingConfig != null && matchingConfig.get('allowCustomTagMatching__c') != null) allowAdvancedMatching = matchingConfig.AllowAdvancedMatching__c;
+
+            return allowAdvancedMatching;
+        }
+
+        set {
+            if (Test.isRunningTest()) allowAdvancedMatching = value;
         }
     }
 
@@ -83,6 +96,16 @@ public with sharing class NZC_EmissionsMatchingMTD {
             if (matchingConfig != null && matchingConfig.get('Emissions_Matching_Batch_Size__c') != null) emissionsMatchBatchSize = Integer.valueOf(matchingConfig.get('Emissions_Matching_Batch_Size__c'));
 
             return emissionsMatchBatchSize;
+        }
+        set;
+    }
+
+    public static Boolean allowTDrecords {
+        get {
+            allowTDrecords = false;
+            if (matchingConfig != null && matchingConfig.get('AllowTransmissionDistribution__c') != null) allowTDrecords = matchingConfig.AllowTransmissionDistribution__c;
+
+            return allowTDrecords;
         }
         set;
     }
@@ -105,9 +128,41 @@ public with sharing class NZC_EmissionsMatchingMTD {
             }
             return customMatchingRules;
         }
-        set {
-            if (Test.isRunningTest()) customMatchingRules = value;
+        set;
+    }
+
+    public static Map<Integer, String> customLookupRules {
+        get {
+            if (customLookupRules == null) {
+                customLookupRules = getCustomLookupRules();
+            }
+            return customLookupRules;
         }
+        set {
+            if (Test.isRunningTest()) customLookupRules = value;
+        }
+    }
+
+    public static Map<Integer, String> tdSplittingRules {
+        get {
+            if (tdSplittingRules == null) {
+                tdSplittingRules = getTDSplittingRules();
+            }
+            return tdSplittingRules;
+        }
+        set {
+            if (Test.isRunningTest()) tdSplittingRules = value;
+        }
+    }
+
+    public static Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>> advancedMatchingRules {
+        get {
+            if (advancedMatchingRules == null) {
+                advancedMatchingRules = getAdvancedMatchingRules();
+            }
+            return advancedMatchingRules;
+        }
+        set;
     }
 
     @TestVisible
@@ -119,6 +174,43 @@ public with sharing class NZC_EmissionsMatchingMTD {
         }
 
         return customMatchingInfo;
+    }
+
+    @TestVisible
+    private static Map<Integer, String> getCustomLookupRules() {
+        Map<Integer, String> customLookupInfo = new Map<Integer, String>();
+
+        for (NZC_EmissionsMatchingCustomLookups__mdt rule : NZC_EmissionsMatchingCustomLookups__mdt.getAll().values()) {
+            customLookupInfo.put(NZC_EmissionsMatchingUtil.createHashKey(rule.ObjectAppliesFor__c,rule.FuelAppliesFor__c), rule.LookupToSearch__c);
+        }
+
+        return customLookupInfo;
+    }
+
+    @TestVisible
+    private static Map<Integer, String> getTDSplittingRules() {
+        Map<Integer, String> tdLookupInfo = new Map<Integer, String>();
+
+        for (NZC_EmissionsMatchingTDCloning__mdt rule : NZC_EmissionsMatchingTDCloning__mdt.getAll().values()) {
+            tdLookupInfo.put(NZC_EmissionsMatchingUtil.createHashKey(rule.ObjectName__c,rule.FuelType__c), rule.FieldsToClone__c);
+        }
+
+        return tdLookupInfo;
+    }
+
+    @TestVisible
+    private static Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>> getAdvancedMatchingRules() {
+        Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>> advanceMatchingInfo = new Map<String, List<NZC_EmissionsMatchingAdvanceMatch__mdt>>();
+
+        for (NZC_EmissionsMatchingAdvanceMatch__mdt rule : NZC_EmissionsMatchingAdvanceMatch__mdt.getAll().values()) {
+            if (!advanceMatchingInfo.containsKey(rule.ObjectAppliesTo__c)) {
+                advanceMatchingInfo.put(rule.ObjectAppliesTo__c, new List<NZC_EmissionsMatchingAdvanceMatch__mdt>());
+            }
+
+            advanceMatchingInfo.get(rule.ObjectAppliesTo__c).add(rule);
+        }
+
+        return advanceMatchingInfo;
     }
 
     @TestVisible

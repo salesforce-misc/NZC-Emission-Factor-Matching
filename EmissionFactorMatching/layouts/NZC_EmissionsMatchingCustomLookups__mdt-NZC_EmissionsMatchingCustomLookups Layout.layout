@@ -8,27 +8,23 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Required</behavior>
+                <field>FuelAppliesFor__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>LookupToSearch__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>ObjectAppliesFor__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
                 <field>MasterLabel</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
                 <field>DeveloperName</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>ObjectAppliesTo__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>EnergyUseFieldToMatch__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>EmissionsSetFieldToMatch__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>FuelType__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -63,24 +59,20 @@
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
-        <customLabel>true</customLabel>
+        <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
-        <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
+    <miniLayout>
+        <fields>FuelAppliesFor__c</fields>
+        <fields>LookupToSearch__c</fields>
+        <fields>ObjectAppliesFor__c</fields>
+    </miniLayout>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
     <showInteractionLogPanel>false</showInteractionLogPanel>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
-    <summaryLayout>
-        <masterLabel>00hOy000009MdAR</masterLabel>
-        <sizeX>4</sizeX>
-        <sizeY>0</sizeY>
-        <summaryLayoutStyle>Default</summaryLayoutStyle>
-    </summaryLayout>
 </Layout>

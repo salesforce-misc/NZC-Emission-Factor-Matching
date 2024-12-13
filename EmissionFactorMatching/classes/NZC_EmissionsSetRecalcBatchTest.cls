@@ -6,8 +6,9 @@
 private class NZC_EmissionsSetRecalcBatchTest {
     @IsTest
     static void testExecute() {
-        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
         NZC_EmissionsMatchingDatafactory.setupStationary('BatchTest');
+        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
+        NZC_EmissionsMatchingMTD.allowAdvancedMatching = false;
 
         Integer elligibleWasteSets = [
                 SELECT COUNT()

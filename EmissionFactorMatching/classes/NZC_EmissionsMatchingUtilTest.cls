@@ -11,6 +11,59 @@ private class NZC_EmissionsMatchingUtilTest {
     }
 
     @IsTest
+    static void testCachedGlobalDescribe() {
+        Assert.isNotNull(NZC_EmissionsMatchingUtil.globalDescribe, 'no cached global describe exists');
+    }
+
+    @IsTest
+    static void testIsFormulaField() {
+        //Assert.isTrue(NZC_EmissionsMatchingUtil.isFormulaField('VehicleAssetEmssnSrc',''), 'expected formula field');
+        Assert.isFalse(NZC_EmissionsMatchingUtil.isFormulaField('VehicleAssetEmssnSrc','Name'), 'expected formula field');
+    }
+
+    @IsTest
+    static void hashRecordFields() {
+        StnryAssetEnvrSrc asset = new StnryAssetEnvrSrc(
+                Name = 'testName',
+                PostalCode = 'Test123',
+                Country = 'CA'
+        );
+
+        String result = NZC_EmissionsMatchingUtil.hashRecordFields(asset, new List<String>{
+                'Name', 'PostalCode', 'Country', 'Description'
+        });
+
+        Assert.isNotNull(result, 'expected a non null hash');
+        Assert.areNotEqual(NZC_EmissionsMatchingUtil.DEFAULT_HASH, result, 'expected a unique hash');
+    }
+
+    @IsTest
+    static void testHashMatrixRecord() {
+        NZC_EmissionsMatchingMatrix__c testMatrixRecord = new NZC_EmissionsMatchingMatrix__c(
+                PrimaryHashkeys__c = '1,2,3,4, 5, 6',
+                AliasHashkeys__c = '4,3,2,1'
+        );
+
+        String testHash = 'ABC'.hashCode() + '';
+
+        NZC_EmissionsMatchingMatrix__c testMatrixSingle = new NZC_EmissionsMatchingMatrix__c(
+                PrimaryHashkeys__c = ' abc',
+                AliasHashkeys__c = 'cba'
+        );
+
+        NZC_EmissionsMatchingUtil.handleMatrixRecordHashing(new List<NZC_EmissionsMatchingMatrix__c>{
+                testMatrixRecord, testMatrixSingle
+        });
+
+        Assert.isNotNull(testMatrixRecord.PrimaryHashStorage__c, 'did not create Hash');
+        Assert.isNotNull(testMatrixRecord.AliasHashStorage__c, 'did not create Hash');
+        Assert.isNotNull(testMatrixSingle.PrimaryHashStorage__c, 'did not create Hash');
+        Assert.isNotNull(testMatrixSingle.AliasHashStorage__c, 'did not create Hash');
+
+        Assert.areEqual(testHash, testMatrixSingle.PrimaryHashStorage__c, 'did not strip space from hash');
+    }
+
+    @IsTest
     static void testgetDateForWrapper() {
         VehicleAssetEnrgyUse testRecord = new VehicleAssetEnrgyUse(
                 StartDate = Date.today(),

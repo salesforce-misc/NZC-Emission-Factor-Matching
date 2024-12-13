@@ -3,6 +3,30 @@
  */
 
 public with sharing class NZC_EmissionsMatchingUtil {
+    private static final String STRIP_REGEX = '[^a-zA-Z0-9]';
+    public static final String DEFAULT_HASH = '0';
+
+    public static Map<String, SObjectType> globalDescribe{
+        get {
+            if (globalDescribe == null) {
+                globalDescribe = Schema.getGlobalDescribe();
+            }
+            return globalDescribe;
+        }
+        set;
+    }
+
+    public static final Map<String, Boolean> isFormulaFieldCache = new Map<String, Boolean>();
+
+    public static Boolean isFormulaField(String objectType, String fieldName) {
+        System.debug('is formula ' + objectType + ' ' + fieldName);
+        if (!isFormulaFieldCache.containsKey(objectType+fieldName)) {
+            Boolean isFormula = globalDescribe.get(objectType).getDescribe().fields.getMap().get(fieldName).getDescribe().isCalculated();
+            isFormulaFieldCache.put(objectType + fieldName, isFormula);
+        }
+
+        return isFormulaFieldCache.get(objectType + fieldName);
+    }
 
     public static Integer createHashKey(String assetId, String fieldName) {
         return createHashKey(new List<String>{assetId, fieldName});
@@ -10,6 +34,54 @@ public with sharing class NZC_EmissionsMatchingUtil {
 
     public static Integer createHashKey(List<String> keys) {
         return String.join(keys, '').hashCode();
+    }
+
+    public static String hashRecordFields(SObject record, List<String> fieldsToHash) {
+        Integer hashedKeys = 0;
+
+        for (String field : fieldsToHash) {
+            if (String.isBlank(field)) continue;
+            field = field.trim();
+            String extractedValue = cleanString(record.get(field) + '');
+            if (extractedValue != 'NULL') hashedKeys += extractedValue.hashCode();
+        }
+
+        return hashedKeys != 0? String.valueOf(hashedKeys) : DEFAULT_HASH;
+    }
+
+    public static void handleMatrixRecordHashing(List<NZC_EmissionsMatchingMatrix__c> matrixRecords) {
+        NZC_EmissionsMatchingLog.log('Hashing Matrix records');
+        for (NZC_EmissionsMatchingMatrix__c record : matrixRecords) {
+            // the record hash values and is not hashed yet
+            if (String.isNotBlank(record.PrimaryHashkeys__c) && String.isBlank(record.PrimaryHashStorage__c)) {
+                record.PrimaryHashStorage__c = splitAndHashString(record.PrimaryHashkeys__c);
+            }
+            if (String.isNotBlank(record.AliasHashkeys__c) && String.isBlank(record.AliasHashStorage__c)) {
+                record.AliasHashStorage__c = splitAndHashString(record.AliasHashkeys__c);
+            }
+        }
+        NZC_EmissionsMatchingLog.log('Hashed');
+    }
+
+    public static String splitAndHashString(String fullString) {
+        return hashListOfStrings(fullString.split(NZC_EmissionsMatchingAdvancedMatchWpr.DEFAULT_SEPARATOR));
+    }
+
+    public static String hashListOfStrings(List<String> valuesToHash) {
+        Integer hashedKeys = 0;
+
+        for (String stringValue : valuesToHash) {
+            if (String.isBlank(stringValue) || stringValue == 'null') continue;
+            String cleanString = cleanString(stringValue);
+            hashedKeys += cleanString.hashCode();
+        }
+
+        return String.valueOf(hashedKeys);
+    }
+
+    public static String cleanString(Object inputString) {
+        String replacedString = ('' + inputString).replaceAll(STRIP_REGEX,'');
+        return replacedString.trim().toUpperCase();
     }
 
     public static Date getDateForWrapper(SObject energyuseRecord) {

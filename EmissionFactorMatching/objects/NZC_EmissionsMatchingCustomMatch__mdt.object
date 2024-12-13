@@ -7,7 +7,7 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>What field on the emissions set should we match to?</inlineHelpText>
-        <label>EmissionsSetFieldToMatch</label>
+        <label>Emissions Set Field To Match</label>
         <length>75</length>
         <required>true</required>
         <type>Text</type>
@@ -19,7 +19,7 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>the name of the energy use field that should be matched</inlineHelpText>
-        <label>EnergyUseFieldToMatch</label>
+        <label>Energy Use Field To Match</label>
         <length>75</length>
         <required>true</required>
         <type>Text</type>
@@ -31,7 +31,7 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>What type of fuel does this apply for?</inlineHelpText>
-        <label>FuelType</label>
+        <label>Fuel Type</label>
         <length>75</length>
         <required>false</required>
         <type>Text</type>
@@ -43,13 +43,23 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>what object does this rule apply to?</inlineHelpText>
-        <label>ObjectAppliesTo</label>
+        <label>Object Applies To</label>
         <length>75</length>
         <required>true</required>
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>NZC_EmissionsMatchingCustomMatch</label>
-    <pluralLabel>NZC_EmissionsMatchingCustomMatches</pluralLabel>
+    <label>NZC Emissions Matching Custom Match</label>
+    <listViews>
+        <fullName>All_Records_with_All_Fields</fullName>
+        <columns>MasterLabel</columns>
+        <columns>ObjectAppliesTo__c</columns>
+        <columns>FuelType__c</columns>
+        <columns>EmissionsSetFieldToMatch__c</columns>
+        <columns>EnergyUseFieldToMatch__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All Records All Fields</label>
+    </listViews>
+    <pluralLabel>NZC Emissions Matching Custom Matches</pluralLabel>
     <visibility>Public</visibility>
 </CustomObject>
