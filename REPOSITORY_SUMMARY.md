@@ -634,7 +634,7 @@ When working with this codebase:
 ---
 
 **Last Updated**: January 5, 2025 - Based on branch `master`  
-**Repository**: NZC---Emission-Factor-Matching - jvillalpando_sfemu  
+**Repository**: NZC-Emission-Factor-Matching - jvillalpando_sfemu  
 **Platform**: Salesforce Platform (API Version 60.0)  
 **Active Environments**: Development, Scratch Orgs
 
