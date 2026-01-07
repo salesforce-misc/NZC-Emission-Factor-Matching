@@ -1,1 +1,29 @@
-{"compilerOptions":{"target":"es2017","module":"es2015","moduleResolution":"node","lib":["es2017","dom"]},"include":["**/*","../../../../node_modules/**/*"],"typeAcquisition":{"enable":true}}
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "lib": [
+            "es2017",
+            "dom"
+        ],
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "c/*": [
+                "*"
+            ]
+        }
+    },
+    "include": [
+        "**/*",
+        "../../../../node_modules/**/*",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ],
+    "typeAcquisition": {
+        "enable": true,
+        "include": [
+            "jest"
+        ]
+    }
+}
