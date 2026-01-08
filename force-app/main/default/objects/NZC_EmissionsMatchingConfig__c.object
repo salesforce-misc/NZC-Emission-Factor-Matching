@@ -3,32 +3,12 @@
     <customSettingsType>List</customSettingsType>
     <enableFeeds>false</enableFeeds>
     <fields>
-        <fullName>AllowAdvancedMatching__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>should advanced matching be enabled, this allows assets to find emissions factors</description>
-        <externalId>false</externalId>
-        <inlineHelpText>should advanced matching be enabled, this allows assets to find emissions factors</inlineHelpText>
-        <label>Allow Advanced Matching</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
         <fullName>AllowCustomTagMatching__c</fullName>
         <defaultValue>false</defaultValue>
         <description>Should custom matching based on fields be allowed? ( overrides emissions factors from asset )</description>
         <externalId>false</externalId>
         <inlineHelpText>Should custom matching based on fields be allowed? ( overrides emissions factors from asset )</inlineHelpText>
         <label>AllowCustomTagMatching</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
-        <fullName>AllowTransmissionDistribution__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>Should transmissions distribution records be allowed to create?</description>
-        <externalId>false</externalId>
-        <inlineHelpText>Should transmissions distribution records be allowed to create?</inlineHelpText>
-        <label>Allow Transmission Distribution</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>

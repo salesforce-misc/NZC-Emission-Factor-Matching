@@ -1,10 +1,9 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/Apache-2.0
  */
-
 
 @IsTest
 public class NZC_EmissionsMatchingDatafactory {
@@ -15,7 +14,7 @@ public class NZC_EmissionsMatchingDatafactory {
     private static final String OTHER_FUEL_TYPE = 'Diesel';
     private static final String OTHER_FUEL_UNIT = 'Liters';
     private static final String UNIT_LBS = 'Lbs';
-    private static final String UNIT_KWH = 'kWH';
+    public static final String UNIT_KWH = 'kWH';
 
     public static void setupStationary(String name) {
         Integer yearsBack = 5;
@@ -278,7 +277,6 @@ public class NZC_EmissionsMatchingDatafactory {
 
     public static VehicleAssetEmssnSrc createVehiclAsset(String name, String otherEmissionsId) {
         Id recordTypeId = VehicleAssetEmssnSrc.SObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('Fleet_Vehicle')?.getRecordTypeId();
-
         VehicleAssetEmssnSrc createdRecord = new VehicleAssetEmssnSrc(
                 Name = name,
                 OtherEmssnFctrId =  otherEmissionsId
@@ -331,9 +329,7 @@ public class NZC_EmissionsMatchingDatafactory {
                 doLog__c = true,
                 Emissions_Matching_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE + 1,
                 Emissions_Recalc_Batch_Size__c = NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE + 1,
-                allowCustomTagMatching__c = true,
-                AllowTransmissionDistribution__c = true,
-                AllowAdvancedMatching__c = true
+                allowCustomTagMatching__c = true
         );
     }
 
@@ -343,22 +339,6 @@ public class NZC_EmissionsMatchingDatafactory {
                 FuelType__c = fuelType,
                 EnergyUseFieldToMatch__c = eurField,
                 EmissionsSetFieldToMatch__c = emissionsField
-        );
-    }
-
-    public static NZC_EmissionsMatchingCustomLookups__mdt createCustomLookupRule(String objectName, String fuelName, String lookupFieldName) {
-        return new NZC_EmissionsMatchingCustomLookups__mdt(
-                ObjectAppliesFor__c = objectName,
-                FuelAppliesFor__c = fuelName,
-                LookupToSearch__c = lookupFieldName
-        );
-    }
-
-    public static NZC_EmissionsMatchingTDCloning__mdt createTDCloningRule(String objectName, String fuelName, String fieldsToClone) {
-        return new NZC_EmissionsMatchingTDCloning__mdt(
-                ObjectName__c = objectName,
-                FuelType__c = fuelName,
-                FieldsToClone__c = fieldsToClone
         );
     }
 }

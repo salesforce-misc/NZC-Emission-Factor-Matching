@@ -1,10 +1,9 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/Apache-2.0
  */
-
 
 @IsTest
 private class NZC_EmissionsMatchingEngineTest {
@@ -144,7 +143,7 @@ private class NZC_EmissionsMatchingEngineTest {
         String customTagField = 'Name';
         String testMatchingKey = 'testKeyName';
 
-        NZC_EmissionsMatchingMTD.customMatchingRules = new Map<Integer, NZC_EmissionsMatchingCustomMatch__mdt>{
+        NZC_EmissionsMatchingMTD.customMatchingRules = new Map<String, NZC_EmissionsMatchingCustomMatch__mdt>{
                 NZC_EmissionsMatchingUtil.createHashKey(objectName,fuelType1) =>
                         NZC_EmissionsMatchingDatafactory.createCustomMatchingRule(objectName, fuelType1, customTagField, customTagField),
                 NZC_EmissionsMatchingUtil.createHashKey(objectName,fuelType2) =>
@@ -156,21 +155,22 @@ private class NZC_EmissionsMatchingEngineTest {
 
         // create settings for trigger to fire
         NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
-        // turn off advanced match to prevent issues
-        NZC_EmissionsMatchingMTD.allowAdvancedMatching = false;
 
         List<StnryAssetEnrgyUse> energyUpdates = new List<StnryAssetEnrgyUse>();
+        Set<String> idsUsed = new Set<String>();
 
         for (StnryAssetEnrgyUse record : [
                 SELECT Id, ElectricityEmissionFactors.Name, RefrigerantEmssnFctr.Name
                 FROM StnryAssetEnrgyUse
-                WHERE FuelType =: fuelType1
-                OR FuelType =: fuelType2
+                WHERE (FuelType =: fuelType1
+                OR FuelType =: fuelType2)
+                AND Recalculate_Emissions__c = TRUE
         ]) {
             Assert.areNotEqual(testMatchingKey, record.RefrigerantEmssnFctr.Name, 'records should be default match');
             Assert.areNotEqual(testMatchingKey, record.ElectricityEmissionFactors.Name,'records should be default match');
             record.Name = testMatchingKey;
             energyUpdates.add(record);
+            idsUsed.add(record.Id);
         }
 
         Test.startTest();
@@ -180,8 +180,9 @@ private class NZC_EmissionsMatchingEngineTest {
         for (StnryAssetEnrgyUse record : [
                 SELECT Id, ElectricityEmissionFactors.Name, RefrigerantEmssnFctr.Name, FuelType
                 FROM StnryAssetEnrgyUse
-                WHERE FuelType =: fuelType1
-                OR FuelType =: fuelType2
+                WHERE (FuelType =: fuelType1
+                OR FuelType =: fuelType2)
+                AND Id IN: idsUsed
         ]) {
             if (record.FuelType == fuelType1) {
                 Assert.areEqual(testMatchingKey, record.ElectricityEmissionFactors.Name, 'records should be rematched');
@@ -190,5 +191,137 @@ private class NZC_EmissionsMatchingEngineTest {
                 Assert.areEqual(testMatchingKey, record.RefrigerantEmssnFctr.Name, 'records should be rematched');
             }
         }
+    }
+
+    @IsTest
+    static void testMatchingMarketBasedEmissions_insert() {
+        StnryAssetEnvrSrc asset = [
+                SELECT Id
+                FROM StnryAssetEnvrSrc
+                LIMIT 1
+        ];
+        Integer yearsBack = 5;
+
+        List<ElectricityEmssnFctrSet> electSetList = NZC_EmissionsMatchingDatafactory.createElecSetMatrix(yearsBack, 'Market Based ElecSet');
+        // master set gets positioned at the end
+        String baseFactorId = electSetList[electSetList.size()-1].Id;
+        asset.MktBsdElectriEmssnFctrId = baseFactorId;
+        update asset;
+
+        // create energy use that will get market based factors based on year
+        StnryAssetEnrgyUse baseYearEur = NZC_EmissionsMatchingDatafactory.createStationaryEnergyUse( 'Base year EUR', asset.Id,
+                NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY, NZC_EmissionsMatchingDatafactory.UNIT_KWH, Date.today().addMonths(-65), Date.today().addMonths(-64));
+
+        StnryAssetEnrgyUse previousYear = NZC_EmissionsMatchingDatafactory.createStationaryEnergyUse( 'previous year EUR', asset.Id,
+                NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY, NZC_EmissionsMatchingDatafactory.UNIT_KWH, Date.today().addMonths(-13), Date.today().addMonths(-12));
+
+        StnryAssetEnrgyUse currentYear = NZC_EmissionsMatchingDatafactory.createStationaryEnergyUse( 'current year EUR', asset.Id,
+                NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY, NZC_EmissionsMatchingDatafactory.UNIT_KWH, Date.today().addMonths(-1), Date.today());
+
+        // create settings for trigger to fire
+        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
+
+        Test.startTest();
+        insert new List<StnryAssetEnrgyUse>{ baseYearEur, previousYear, currentYear};
+        Test.stopTest();
+
+        StnryAssetEnrgyUse baseYearEurAfter = [
+                SELECT Id, MktBsdElectriEmssnFctrId
+                FROM StnryAssetEnrgyUse
+                WHERE Id = :baseYearEur.Id
+        ];
+
+        StnryAssetEnrgyUse previousYearEurAfter = [
+                SELECT Id, MktBsdElectriEmssnFctrId
+                FROM StnryAssetEnrgyUse
+                WHERE Id = :previousYear.Id
+        ];
+
+        StnryAssetEnrgyUse currentYearEurAfter = [
+                SELECT Id, MktBsdElectriEmssnFctrId
+                FROM StnryAssetEnrgyUse
+                WHERE Id = :currentYear.Id
+        ];
+
+        Assert.isNotNull(baseYearEurAfter.MktBsdElectriEmssnFctrId, 'no market based factor assigned to base year');
+        Assert.isNotNull(previousYearEurAfter.MktBsdElectriEmssnFctrId, 'no market based factor assigned to previous year');
+        Assert.isNotNull(currentYearEurAfter.MktBsdElectriEmssnFctrId, 'no market based factor assigned to current year');
+
+        Assert.areEqual(baseFactorId, baseYearEurAfter.MktBsdElectriEmssnFctrId, 'expected historical data to use base factor');
+        Assert.areNotEqual(baseFactorId, previousYearEurAfter.MktBsdElectriEmssnFctrId, 'expected previous year data to use non base factor');
+        Assert.areNotEqual(baseFactorId, currentYearEurAfter.MktBsdElectriEmssnFctrId, 'expected current year data to use non base factor');
+        Assert.areNotEqual(previousYearEurAfter.MktBsdElectriEmssnFctrId, currentYearEurAfter.MktBsdElectriEmssnFctrId, 'expected current year to have different factor then last year');
+    }
+
+    @IsTest
+    static void testMatchingMarketBasedEmissions_update() {
+        StnryAssetEnvrSrc asset = [
+                SELECT Id
+                FROM StnryAssetEnvrSrc
+                LIMIT 1
+        ];
+        Integer yearsBack = 5;
+
+        List<ElectricityEmssnFctrSet> electSetList = NZC_EmissionsMatchingDatafactory.createElecSetMatrix(yearsBack, 'Market Based ElecSet');
+        // master set gets positioned at the end
+        String baseFactorId = electSetList[electSetList.size()-1].Id;
+        asset.MktBsdElectriEmssnFctrId = baseFactorId;
+        update asset;
+
+        // create energy use that will get market based factors based on year
+        StnryAssetEnrgyUse baseYearEur = NZC_EmissionsMatchingDatafactory.createStationaryEnergyUse( 'Base year EUR', asset.Id,
+                NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY, NZC_EmissionsMatchingDatafactory.UNIT_KWH, Date.today().addMonths(-65), Date.today().addMonths(-64));
+
+        StnryAssetEnrgyUse previousYear = NZC_EmissionsMatchingDatafactory.createStationaryEnergyUse( 'previous year EUR', asset.Id,
+                NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY, NZC_EmissionsMatchingDatafactory.UNIT_KWH, Date.today().addMonths(-13), Date.today().addMonths(-12));
+
+        StnryAssetEnrgyUse currentYear = NZC_EmissionsMatchingDatafactory.createStationaryEnergyUse( 'current year EUR', asset.Id,
+                NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY, NZC_EmissionsMatchingDatafactory.UNIT_KWH, Date.today().addMonths(-1), Date.today());
+
+        insert new List<StnryAssetEnrgyUse>{ baseYearEur, previousYear, currentYear};
+
+        for (StnryAssetEnrgyUse eur : [
+                SELECT Id, Recalculate_Emissions__c
+                FROM StnryAssetEnrgyUse
+                WHERE Id =: baseYearEur.Id
+                OR Id =: previousYear.Id
+                OR Id =: currentYear.Id
+        ]) {
+            Assert.isTrue(eur.Recalculate_Emissions__c, 'recalculate proccess already fired');
+        }
+
+        // create settings for trigger to fire
+        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
+
+        Test.startTest();
+        update new List<StnryAssetEnrgyUse>{ baseYearEur, previousYear, currentYear};
+        Test.stopTest();
+
+        StnryAssetEnrgyUse baseYearEurAfter = [
+                SELECT Id, MktBsdElectriEmssnFctrId
+                FROM StnryAssetEnrgyUse
+                WHERE Id = :baseYearEur.Id
+        ];
+
+        StnryAssetEnrgyUse previousYearEurAfter = [
+                SELECT Id, MktBsdElectriEmssnFctrId
+                FROM StnryAssetEnrgyUse
+                WHERE Id = :previousYear.Id
+        ];
+
+        StnryAssetEnrgyUse currentYearEurAfter = [
+                SELECT Id, MktBsdElectriEmssnFctrId
+                FROM StnryAssetEnrgyUse
+                WHERE Id = :currentYear.Id
+        ];
+
+        Assert.isNotNull(baseYearEurAfter.MktBsdElectriEmssnFctrId, 'no market based factor assigned to base year');
+        Assert.isNotNull(previousYearEurAfter.MktBsdElectriEmssnFctrId, 'no market based factor assigned to previous year');
+        Assert.isNotNull(currentYearEurAfter.MktBsdElectriEmssnFctrId, 'no market based factor assigned to current year');
+
+        Assert.areEqual(baseFactorId, baseYearEurAfter.MktBsdElectriEmssnFctrId, 'expected historical data to use base factor');
+        Assert.areNotEqual(baseFactorId, previousYearEurAfter.MktBsdElectriEmssnFctrId, 'expected previous year data to use non base factor');
+        Assert.areNotEqual(baseFactorId, currentYearEurAfter.MktBsdElectriEmssnFctrId, 'expected current year data to use non base factor');
+        Assert.areNotEqual(previousYearEurAfter.MktBsdElectriEmssnFctrId, currentYearEurAfter.MktBsdElectriEmssnFctrId, 'expected current year to have different factor then last year');
     }
 }

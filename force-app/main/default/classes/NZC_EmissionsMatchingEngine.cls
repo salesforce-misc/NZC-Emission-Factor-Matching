@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
@@ -16,26 +16,26 @@ public with sharing class NZC_EmissionsMatchingEngine {
     // objects we need to query for emissions sets
     private final Set<String> emissionsSetObjectNames;
     // master Set ids we need to look for child records for
-    private final Map<Integer, String> masterEmissionsSetIdsByAssetHash;
+    private final Map<String, String> masterEmissionsSetIdsByAssetHash;
     // sorted emissions date ranges by Master set Id => List<child emissions sets date ordered>
     private Map<String, List<SObject>> dateSortedEmissionsSetsMap;
 
     // custom matching values on EUR to try find ( example value would be country code or ZIP code )
     private final Set<String> customMatchingKeys;
     // used to keep track of what emissions objects we need to query for custom key matching and the hash keys to link it to custom MTD
-    private final Map<String, Set<Integer>> customMatchingEmissionsObjectNames;
+    private final Map<String, Set<String>> customMatchingEmissionsObjectNames;
     // used for custom key matching emissions sets
-    private final Map<Integer, String> customMatchingKeyToMasterSetIdMap;
+    private final Map<String, String> customMatchingKeyToMasterSetIdMap;
 
     public NZC_EmissionsMatchingEngine() {
         masterSetAssetObjectTypeAndFieldsMap = new Map<String, Set<String>>();
         matchTargets = new List<NZC_EmissionsMatchingWrapper>();
         assetIdsSet = new Set<String>();
         emissionsSetObjectNames = new Set<String>();
-        masterEmissionsSetIdsByAssetHash = new Map<Integer, String>();
+        masterEmissionsSetIdsByAssetHash = new Map<String, String>();
         customMatchingKeys = new Set<String>();
-        customMatchingEmissionsObjectNames = new Map<String, Set<Integer>>();
-        customMatchingKeyToMasterSetIdMap = new Map<Integer, String>();
+        customMatchingEmissionsObjectNames = new Map<String, Set<String>>();
+        customMatchingKeyToMasterSetIdMap = new Map<String, String>();
         NZC_EmissionsMatchingLog.log('starting engine');
     }
 
@@ -69,7 +69,12 @@ public with sharing class NZC_EmissionsMatchingEngine {
         NZC_EmissionsMatchingLog.log('attach updates', matchTargets.size());
         for (NZC_EmissionsMatchingWrapper wrapper : matchTargets) {
             if (recordsMap.containsKey(wrapper.energyUseRecordId)) {
+                // attach master emissions factor
                 recordsMap.get(wrapper.energyUseRecordId).put(wrapper.getEnergyUseLookupFieldName(), wrapper.matchedId);
+                // attach secondary lookup if applicable
+                if (wrapper.requiresSecondaryLookup) {
+                    recordsMap.get(wrapper.energyUseRecordId).put(wrapper.getSecondaryEnergyUseLookupFieldName(), wrapper.secondaryMatchedId);
+                }
             }
         }
     }
@@ -85,11 +90,13 @@ public with sharing class NZC_EmissionsMatchingEngine {
             }
 
             masterSetAssetObjectTypeAndFieldsMap.get(matchWrapper.getParentAssetObjName()).add(matchWrapper.getObjectAssetLookupFieldName());
+            // get secondary lookup name if applicable ( typically market based factors )
+            if (matchWrapper.requiresSecondaryLookup) masterSetAssetObjectTypeAndFieldsMap.get(matchWrapper.getParentAssetObjName()).add(matchWrapper.getSecondaryLookupName());
         }
 
         if (String.isNotBlank(matchWrapper.customMatchingValue)) {
             if (!customMatchingEmissionsObjectNames.containsKey(matchWrapper.getEmissionsFactorObjectName())) {
-                customMatchingEmissionsObjectNames.put(matchWrapper.getEmissionsFactorObjectName(), new Set<Integer>());
+                customMatchingEmissionsObjectNames.put(matchWrapper.getEmissionsFactorObjectName(), new Set<String>());
             }
 
             customMatchingKeys.add(matchWrapper.customMatchingValue);
@@ -112,7 +119,7 @@ public with sharing class NZC_EmissionsMatchingEngine {
                 NZC_EmissionsMatchingLog.log(returnedAsset);
                 for (String fieldName : masterSetAssetObjectTypeAndFieldsMap.get(objectName)) {
                     if (returnedAsset.get(fieldName) != null) {
-                        Integer hashKey = NZC_EmissionsMatchingUtil.createHashKey(returnedAsset.Id, fieldName);
+                        String hashKey = NZC_EmissionsMatchingUtil.createHashKey(returnedAsset.Id, fieldName);
                         // grab each emissions Id from asset
                         masterEmissionsSetIdsByAssetHash.put(hashKey, (String) returnedAsset.get(fieldName));
                         // get name of emissions set object
@@ -132,7 +139,7 @@ public with sharing class NZC_EmissionsMatchingEngine {
         for (String objectName : customMatchingEmissionsObjectNames.keySet()) {
             List<String> fieldsNeeded = new List<String>();
             List<String> whereClauses = new List<String>();
-            for (Integer hashKey : customMatchingEmissionsObjectNames.get(objectName)) {
+            for (String hashKey : customMatchingEmissionsObjectNames.get(objectName)) {
                 // get fields needed from custom MTD
                 fieldsNeeded.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c);
                 whereClauses.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c + ' IN: customMatchValues');
@@ -162,14 +169,21 @@ public with sharing class NZC_EmissionsMatchingEngine {
     }
 
     private void attachMasterEmissionsSetToWrapper() {
-        NZC_EmissionsMatchingLog.log('attaching master set to wrapper');
         for (NZC_EmissionsMatchingWrapper wrapper : matchTargets) {
-            Integer hashKey = NZC_EmissionsMatchingUtil.createHashKey(wrapper.assetId, wrapper.getObjectAssetLookupFieldName());
+            String hashKey = NZC_EmissionsMatchingUtil.createHashKey(wrapper.assetId, wrapper.getObjectAssetLookupFieldName());
             wrapper.masterEmissionsSetId = masterEmissionsSetIdsByAssetHash.get(hashKey);
-            wrapper.matchedId = wrapper.masterEmissionsSetId;
+            NZC_EmissionsMatchingLog.log('attaching master set to wrapper : ' + wrapper.masterEmissionsSetId);
+
+            if (wrapper.requiresSecondaryLookup) {
+                // requires market based lookup
+                String secondaryHash = NZC_EmissionsMatchingUtil.createHashKey(wrapper.assetId, wrapper.getSecondaryLookupName());
+                wrapper.secondaryEmissionsSetId = masterEmissionsSetIdsByAssetHash.get(secondaryHash);
+                NZC_EmissionsMatchingLog.log('attaching secondary set to wrapper ' + wrapper.secondaryEmissionsSetId);
+            }
+
             if (wrapper.doesUseCustomEmissionsMatching()) {
                 NZC_EmissionsMatchingLog.log('custom key match used', wrapper.customMatchingValue);
-                Integer customKeyMatchingHash = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{
+                String customKeyMatchingHash = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{
                         wrapper.getEmissionsFactorObjectName(), wrapper.customMatchingValue
                 });
                 if (customMatchingKeyToMasterSetIdMap.containsKey(customKeyMatchingHash)) {
@@ -206,18 +220,35 @@ public with sharing class NZC_EmissionsMatchingEngine {
     private void matchClosestEmission() {
         for (NZC_EmissionsMatchingWrapper emissionsWrapper : matchTargets) {
             matchClosestEmission(emissionsWrapper);
+
+            if (emissionsWrapper.requiresSecondaryLookup && emissionsWrapper.secondaryEmissionsSetId != null) {
+                System.debug('secondary Match firing');
+                emissionsWrapper.secondaryMatchedId = matchClosestEmission( emissionsWrapper.dateToMatch, emissionsWrapper.secondaryEmissionsSetId);
+            }
         }
     }
 
     private void matchClosestEmission(NZC_EmissionsMatchingWrapper emissionsWrapper) {
-        Boolean canStart = emissionsWrapper.dateToMatch != null
-                && emissionsWrapper.masterEmissionsSetId != null
-                && dateSortedEmissionsSetsMap.containsKey(emissionsWrapper.masterEmissionsSetId);
-        NZC_EmissionsMatchingLog.log('can start date matching', canStart);
-        if (canStart) {
-            List<SObject> dateSortedList = dateSortedEmissionsSetsMap.get(emissionsWrapper.masterEmissionsSetId);
-            emissionsWrapper.matchedId = matchingLogic(emissionsWrapper.masterEmissionsSetId, emissionsWrapper.dateToMatch, dateSortedList);
+        String returnedId = matchClosestEmission(emissionsWrapper.dateToMatch, emissionsWrapper.masterEmissionsSetId);
+        // if a Null is returned and set it breaks tag matching functionality because tag matching set matchedId earlier
+        if (String.isNotBlank(returnedId)) {
+            emissionsWrapper.matchedId = returnedId;
         }
+    }
+
+    private String matchClosestEmission(Date dateToMatch, String masterEmissionsSetId) {
+        Boolean canStart = dateToMatch != null
+                && masterEmissionsSetId != null
+                && dateSortedEmissionsSetsMap.containsKey(masterEmissionsSetId);
+        NZC_EmissionsMatchingLog.log('can start date matching', canStart);
+        NZC_EmissionsMatchingLog.log(dateToMatch);
+        NZC_EmissionsMatchingLog.log(masterEmissionsSetId);
+        NZC_EmissionsMatchingLog.log(dateSortedEmissionsSetsMap.containsKey(masterEmissionsSetId));
+        if (canStart) {
+            List<SObject> dateSortedList = dateSortedEmissionsSetsMap.get(masterEmissionsSetId);
+            return matchingLogic(masterEmissionsSetId, dateToMatch, dateSortedList);
+        }
+        return null;
     }
 
     @TestVisible

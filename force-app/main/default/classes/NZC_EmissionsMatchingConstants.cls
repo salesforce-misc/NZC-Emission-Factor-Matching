@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
@@ -27,12 +27,14 @@ public with sharing class NZC_EmissionsMatchingConstants {
     public static final String OBJECT_SCOPE3_ASSET = 'Scope3EmssnSrc';
 
     public static final String FIELD_STATIONARY_ASSET_ELECTRIC_EMISSIONS = 'ElectricityEmssnFctrId';
+    public static final String FIELD_STATIONARY_ASSET_MARKETBASED_ELECTRIC_EMISSIONS = 'MktBsdElectriEmssnFctrId';
     public static final String FIELD_STATIONARY_ASSET_REFRIGERANT_EMISSIONS = 'RefrigerantEmssnFctrId';
     public static final String FIELD_STATIONARY_ASSET_WASTE_EMISSIONS = 'WstDispoEmssnFctrSetId';
     public static final String FIELD_HOTEL_ASSET_EMISSIONS = 'HotelStayEmssnFctrId';
     public static final String FIELD_OTHER_ASSET_EMISSIONS = 'OtherEmssnFctrId';
 
     public static final String FIELD_EUR_ELECTRIC_EMISSIONS = 'ElectricityEmissionFactorsId';
+    public static final String FIELD_EUR_MARKETBASED_ELECTRIC_EMISSIONS = 'MktBsdElectriEmssnFctrId';
     public static final String FIELD_EUR_REFRIGERANT_EMISSIONS = 'RefrigerantEmssnFctrId';
     public static final String FIELD_EUR_WASTE_EMISSIONS = 'WstDispoEmssnFctrId';
     public static final String FIELD_EUR_HOTEL_EMISSIONS = 'HotelStayEmssnFctrId';
@@ -101,11 +103,5 @@ public with sharing class NZC_EmissionsMatchingConstants {
     public static final Map<String, String> EUR_OBJECT_EMISSIONS_SET_NAME_MAP = new Map<String, String>{
             OBJECT_WASTE_USE => OBJECT_WASTE_SET,
             OBJECT_HOTEL_USE => OBJECT_HOTEL_SET
-    };
-
-    // used to know what objects have master set field
-    public static final Set<String> EXCLUDE_MASTER_SET_LIST = new Set<String>{
-            OBJECT_OTHER_EMISSION_SET, OBJECT_ELECTRICITY_SET, OBJECT_REFRIGERANT_SET,
-            OBJECT_WASTE_SET, OBJECT_HOTEL_SET
     };
 }

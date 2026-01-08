@@ -1,18 +1,16 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/Apache-2.0
  */
 
-
 @IsTest
 private class NZC_EmissionsSetRecalcBatchTest {
     @IsTest
     static void testExecute() {
-        NZC_EmissionsMatchingDatafactory.setupStationary('BatchTest');
         NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
-        NZC_EmissionsMatchingMTD.allowAdvancedMatching = false;
+        NZC_EmissionsMatchingDatafactory.setupStationary('BatchTest');
 
         Integer elligibleWasteSets = [
                 SELECT COUNT()

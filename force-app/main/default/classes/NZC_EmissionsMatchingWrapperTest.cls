@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
@@ -139,5 +139,28 @@ private class NZC_EmissionsMatchingWrapperTest {
         Assert.areEqual(NZC_EmissionsMatchingConstants.FIELD_EUR_WASTE_EMISSIONS, useLookupName);
         Assert.areEqual(useRecord.Id, (Id) recordUpdate.get('Id'));
         Assert.areEqual(useRecord.WstDispoEmssnFctrId, (Id) recordUpdate.get('WstDispoEmssnFctrId'));
+    }
+
+    @IsTest
+    static void testSecondaryMatchFields() {
+        StnryAssetEnrgyUse useRecord = [
+                SELECT Id, OtherEmssnFctrId, RefrigerantEmssnFctrId, ElectricityEmissionFactorsId, StartDate, StnryAssetEnvrSrcId, FuelType
+                FROM StnryAssetEnrgyUse
+                WHERE FuelType =: 'Electricity'
+                LIMIT 1
+        ];
+
+        NZC_EmissionsMatchingWrapper stationWrapper = new NZC_EmissionsMatchingWrapper(
+                useRecord.StnryAssetEnvrSrcId, useRecord.Id, useRecord.StartDate, useRecord.FuelType);
+        stationWrapper.matchedId = useRecord.ElectricityEmissionFactorsId;
+
+        String secondaryAssetFieldName = stationWrapper.getSecondaryLookupName();
+        String secondaryEurFieldName = stationWrapper.getSecondaryEnergyUseLookupFieldName();
+
+        Assert.isTrue(stationWrapper.requiresSecondaryLookup, 'expected secondary match for market based factor');
+        Assert.areEqual(NZC_EmissionsMatchingConstants.FIELD_STATIONARY_ASSET_MARKETBASED_ELECTRIC_EMISSIONS,
+                secondaryAssetFieldName, 'should be looking for market based field');
+        Assert.areEqual(NZC_EmissionsMatchingConstants.FIELD_EUR_MARKETBASED_ELECTRIC_EMISSIONS,
+                secondaryEurFieldName, 'expected lookup name for market based emissions field');
     }
 }

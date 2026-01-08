@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Used to match emissions sets based on criteria besides year</description>
+    <fields>
+        <fullName>EmissionsSetFieldToMatch__c</fullName>
+        <description>What field on the emissions set should we match to?</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>What field on the emissions set should we match to?</inlineHelpText>
+        <label>EmissionsSetFieldToMatch</label>
+        <length>75</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>EnergyUseFieldToMatch__c</fullName>
+        <description>the name of the energy use field that should be matched</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>the name of the energy use field that should be matched</inlineHelpText>
+        <label>EnergyUseFieldToMatch</label>
+        <length>75</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>FuelType__c</fullName>
+        <description>What type of fuel does this apply for?</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>What type of fuel does this apply for?</inlineHelpText>
+        <label>FuelType</label>
+        <length>75</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ObjectAppliesTo__c</fullName>
+        <description>what object does this rule apply to?</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>what object does this rule apply to?</inlineHelpText>
+        <label>ObjectAppliesTo</label>
+        <length>75</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>NZC_EmissionsMatchingCustomMatch</label>
+    <listViews>
+        <fullName>All_Records_with_All_Fields</fullName>
+        <columns>MasterLabel</columns>
+        <columns>ObjectAppliesTo__c</columns>
+        <columns>FuelType__c</columns>
+        <columns>EmissionsSetFieldToMatch__c</columns>
+        <columns>EnergyUseFieldToMatch__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All Records All Fields</label>
+    </listViews>
+    <pluralLabel>NZC_EmissionsMatchingCustomMatches</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

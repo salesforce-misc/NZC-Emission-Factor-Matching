@@ -9,18 +9,4 @@
         <trackHistory>false</trackHistory>
         <type>Checkbox</type>
     </fields>
-    <fields>
-        <fullName>TDLossParent__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <description>The parent record this TD loss record was created from</description>
-        <externalId>false</externalId>
-        <inlineHelpText>The parent record this TD loss record was created from</inlineHelpText>
-        <label>TD Loss Parent Record</label>
-        <referenceTo>StnryAssetEnrgyUse</referenceTo>
-        <relationshipLabel>Stationary Asset Energy Use</relationshipLabel>
-        <relationshipName>Stationary_Asset_Energy_Use</relationshipName>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <type>Lookup</type>
-    </fields>
 </CustomObject>
