@@ -7,7 +7,7 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>What field on the emissions set should we match to?</inlineHelpText>
-        <label>Emissions Set Field To Match</label>
+        <label>EmissionsSetFieldToMatch</label>
         <length>75</length>
         <required>true</required>
         <type>Text</type>
@@ -19,7 +19,7 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>the name of the energy use field that should be matched</inlineHelpText>
-        <label>Energy Use Field To Match</label>
+        <label>EnergyUseFieldToMatch</label>
         <length>75</length>
         <required>true</required>
         <type>Text</type>
@@ -31,7 +31,7 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>What type of fuel does this apply for?</inlineHelpText>
-        <label>Fuel Type</label>
+        <label>FuelType</label>
         <length>75</length>
         <required>false</required>
         <type>Text</type>
@@ -43,13 +43,13 @@
         <externalId>false</externalId>
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>what object does this rule apply to?</inlineHelpText>
-        <label>Object Applies To</label>
+        <label>ObjectAppliesTo</label>
         <length>75</length>
         <required>true</required>
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>NZC Emissions Matching Custom Match</label>
+    <label>NZC_EmissionsMatchingCustomMatch</label>
     <listViews>
         <fullName>All_Records_with_All_Fields</fullName>
         <columns>MasterLabel</columns>
@@ -60,6 +60,6 @@
         <filterScope>Everything</filterScope>
         <label>All Records All Fields</label>
     </listViews>
-    <pluralLabel>NZC Emissions Matching Custom Matches</pluralLabel>
+    <pluralLabel>NZC_EmissionsMatchingCustomMatches</pluralLabel>
     <visibility>Public</visibility>
 </CustomObject>

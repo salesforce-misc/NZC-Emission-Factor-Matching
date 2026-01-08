@@ -10,10 +10,10 @@
     <fields>
         <fullName>MasterEmissionsSet__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
-        <label>MasterEmissionsSet</label>
-        <referenceTo>RefrigerantEmssnFctr</referenceTo>
-        <relationshipLabel>Refrigerant Emissions Factors</relationshipLabel>
-        <relationshipName>Refrigerant_Emissions_Factors</relationshipName>
+        <label>Master Emissions Set</label>
+        <referenceTo>RentalCarEmssnFctr</referenceTo>
+        <relationshipLabel>Rental Car Emissions Factors</relationshipLabel>
+        <relationshipName>RentalCarEmssnFctrs</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <type>Lookup</type>

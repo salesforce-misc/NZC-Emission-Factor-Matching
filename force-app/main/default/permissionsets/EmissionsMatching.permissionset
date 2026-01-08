@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <classAccesses>
-        <apexClass>NZC_EmissionMatchingInsertWrapper</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingAdvancedMatch</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingAdvancedMatchTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingAdvancedMatchWpr</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingAdvcMatchWprTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>NZC_EmissionsMatchingBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -65,14 +45,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>NZC_EmissionsMatchingInsertEngine</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingInsertEngineTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>NZC_EmissionsMatchingLog</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -98,14 +70,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>NZC_EmissionsMatchingStationaryWrapper</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingTDLosses</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>NZC_EmissionsMatchingTDLossesTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -166,20 +130,20 @@
     </classAccesses>
     <customMetadataTypeAccesses>
         <enabled>true</enabled>
-        <name>NZC_EmissionsMatchingAdvanceMatch__mdt</name>
-    </customMetadataTypeAccesses>
-    <customMetadataTypeAccesses>
-        <enabled>true</enabled>
-        <name>NZC_EmissionsMatchingCustomLookups__mdt</name>
-    </customMetadataTypeAccesses>
-    <customMetadataTypeAccesses>
-        <enabled>true</enabled>
         <name>NZC_EmissionsMatchingCustomMatch__mdt</name>
     </customMetadataTypeAccesses>
-    <customMetadataTypeAccesses>
-        <enabled>true</enabled>
-        <name>NZC_EmissionsMatchingTDCloning__mdt</name>
-    </customMetadataTypeAccesses>
+        <field>AirTravelEmssnFctr.EmissionsFactorUpdateYear__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>AirTravelEmssnFctr.MasterEmissionsSet__c</field>
+        <readable>true</readable>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>AirTravelEnrgyUse.Recalculate_Emissions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>ElectricityEmssnFctrSet.EmissionsFactorUpdateYear__c</field>
@@ -193,6 +157,51 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>ElectricityEmssnFctrSet.Recalculate_Emissions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>FrgtHaulingEmssnFctr.EmissionsFactorUpdateYear__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>FrgtHaulingEmssnFctr.MasterEmissionsSet__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>FrgtHaulingEnrgyUse.Recalculate_Emissions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>GroundTravelEmssnFctr.EmissionsFactorUpdateYear__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>GroundTravelEmssnFctr.MasterEmissionsSet__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>GroundTravelEnrgyUse.Recalculate_Emissions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+        <fieldPermissions>
+        <editable>true</editable>
+        <field>RentalCarEmssnFctr.EmissionsFactorUpdateYear__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>RentalCarEmssnFctr.MasterEmissionsSet__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>RentalCarEnrgyUse.Recalculate_Emissions__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -218,31 +227,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>HotelStayEnrgyUse.Recalculate_Emissions__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>NZC_EmissionsMatchingMatrix__c.AliasHashStorage__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>NZC_EmissionsMatchingMatrix__c.AliasHashkeys__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>NZC_EmissionsMatchingMatrix__c.LookupOverride__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>NZC_EmissionsMatchingMatrix__c.PrimaryHashStorage__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>NZC_EmissionsMatchingMatrix__c.PrimaryHashkeys__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -282,16 +266,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>StnryAssetEnrgyUse.TDLossParent__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>StnryAssetEnvrSrc.T_D_losses_emissions_set__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>VehicleAssetEnrgyUse.Recalculate_Emissions__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -312,17 +286,4 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>EmissionsMatching</label>
-    <objectPermissions>
-        <allowCreate>true</allowCreate>
-        <allowDelete>true</allowDelete>
-        <allowEdit>true</allowEdit>
-        <allowRead>true</allowRead>
-        <modifyAllRecords>true</modifyAllRecords>
-        <object>NZC_EmissionsMatchingMatrix__c</object>
-        <viewAllRecords>true</viewAllRecords>
-    </objectPermissions>
-    <tabSettings>
-        <tab>NZC_EmissionsMatchingMatrix__c</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
 </PermissionSet>

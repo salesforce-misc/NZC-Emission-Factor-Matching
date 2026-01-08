@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
@@ -11,29 +11,34 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
     public String energyUseRecordId;
     public String objectName;
     public String fuelType;
+    public Boolean requiresSecondaryLookup;
 
     public Date dateToMatch;
+    // primary lookup for object
     public String masterEmissionsSetId;
+    // secondary lookup ( typically market based electricity lookup )
+    public String secondaryEmissionsSetId;
 
+    // factor we match with
     public String matchedId;
+    // secondary factor we match with
+    public String secondaryMatchedId;
     public String customMatchingValue;
 
     public NZC_EmissionsMatchingWrapper(String assetId, String energyUseRecordId, Date dateToMatch, String fuelType) {
         // used for all contexts outside of before record insert
-        this.assetId = assetId;
-        this.energyUseRecordId = energyUseRecordId;
-        this.dateToMatch = dateToMatch;
-        this.fuelType = fuelType;
-        this.objectName = getObjectTypeFromId(energyUseRecordId);
+        this(assetId, energyUseRecordId, dateToMatch, fuelType, getObjectTypeFromId(energyUseRecordId));
     }
 
-    public NZC_EmissionsMatchingWrapper(String assetId, String generatedId, Date dateToMatch, String fuelType, String objectType) {
-        // used for record insert because of lack of Record Id
+    public NZC_EmissionsMatchingWrapper(String assetId, String energyUseRecordId, Date dateToMatch, String fuelType, String objectType) {
+        // used for before insert because of lack of Record Id
         this.assetId = assetId;
-        this.energyUseRecordId = generatedId;// this is a temp generated Id just for linking updates back to a record
+        this.energyUseRecordId = energyUseRecordId;// this is a temp generated Id just for linking updates back to a record
         this.dateToMatch = dateToMatch;
         this.fuelType = fuelType;
         this.objectName = objectType;
+        this.requiresSecondaryLookup = objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE
+                && fuelType == NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY;
     }
 
     public Boolean doesUseCustomEmissionsMatching() {
@@ -52,7 +57,7 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
     }
 
     public SObject createRecordUpdate() {
-        SObject recordUpdate = NZC_EmissionsMatchingUtil.globalDescribe.get(objectName).newSObject();
+        SObject recordUpdate = Schema.getGlobalDescribe().get(objectName).newSObject();
         recordUpdate.put('Id', energyUseRecordId);
 
         recordUpdate.put(getEnergyUseLookupFieldName(), matchedId);
@@ -74,14 +79,15 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
         if (NZC_EmissionsMatchingConstants.ASSET_OBJECT_SPECIFIC_FIELDS_MAP.containsKey(objectName)) {
             defaultFieldName = NZC_EmissionsMatchingConstants.ASSET_OBJECT_SPECIFIC_FIELDS_MAP.get(objectName);
         }
-
-        if (NZC_EmissionsMatchingMTD.customLookupRules.containsKey(NZC_EmissionsMatchingUtil.createHashKey(objectName, fuelType))) {
-            // using custom lookup
-            System.debug('looking for custom lookup');
-            defaultFieldName = NZC_EmissionsMatchingMTD.customLookupRules.get(NZC_EmissionsMatchingUtil.createHashKey(objectName, fuelType));
-        }
-
         return defaultFieldName;
+    }
+
+    public String getSecondaryLookupName() {
+        // primarily used to get market based lookup name, can be used for future functionality
+        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE && fuelType == NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY) {
+            return NZC_EmissionsMatchingConstants.FIELD_STATIONARY_ASSET_MARKETBASED_ELECTRIC_EMISSIONS;
+        }
+        return null;
     }
 
     public String getEnergyUseLookupFieldName() {
@@ -96,6 +102,13 @@ public with sharing virtual class NZC_EmissionsMatchingWrapper {
         }
 
         return defaultFieldName;
+    }
+
+    public String getSecondaryEnergyUseLookupFieldName() {
+        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE && fuelType == NZC_EmissionsMatchingConstants.FUEL_TYPE_ELECTRICITY) {
+            return NZC_EmissionsMatchingConstants.FIELD_EUR_MARKETBASED_ELECTRIC_EMISSIONS;
+        }
+        return null;
     }
 
     public String getEmissionsFactorObjectName() {
