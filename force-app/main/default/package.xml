@@ -2,6 +2,15 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>EmissionFactorMatching</fullName>
     <types>
+        <members>NZC_EmissionsMatchingAirTggrTest</members>
+        <members>NZC_EmissionsMatchingAirTravelWrapper</members>
+        <members>NZC_EmissionsMatchingAirWrapperTest</members>
+        <members>NZC_EmissionsMatchingFreightTriggerTest</members>
+        <members>NZC_EmissionsMatchingFreightWrapper</members>
+        <members>NZC_EmissionsMatchingFreightWrapperTest</members>
+        <members>NZC_EmissionsMatchingGroundTggrTest</members>
+        <members>NZC_EmissionsMatchingGroundTravelWrapper</members>
+        <members>NZC_EmissionsMatchingGroundWrapperTest</members>
         <members>NZC_EmissionsMatchingBatch</members>
         <members>NZC_EmissionsMatchingBatchController</members>
         <members>NZC_EmissionsMatchingBatchControllerTest</members>
@@ -17,6 +26,9 @@
         <members>NZC_EmissionsMatchingLogTest</members>
         <members>NZC_EmissionsMatchingMTD</members>
         <members>NZC_EmissionsMatchingMTDTest</members>
+        <members>NZC_EmissionsMatchingRentalCarWrapper</members>
+        <members>NZC_EmissionsMatchingRntlCarTggrTest</members>
+        <members>NZC_EmissionsMatchingRntlCarWrapperTest</members>
         <members>NZC_EmissionsMatchingStationaryTggrTest</members>
         <members>NZC_EmissionsMatchingStationaryWpprTest</members>
         <members>NZC_EmissionsMatchingStationaryWrapper</members>
@@ -37,17 +49,33 @@
         <name>ApexClass</name>
     </types>
     <types>
+        <members>NZC_EmissionsMatchingAirTravelTrigger</members>
+        <members>NZC_EmissionsMatchingFreightTrigger</members>
+        <members>NZC_EmissionsMatchingGroundTravelTrigger</members>
         <members>NZC_EmissionsMatchingHotelTrigger</members>
+        <members>NZC_EmissionsMatchingRentalCarTrigger</members>
         <members>NZC_EmissionsMatchingStationaryTrigger</members>
         <members>NZC_EmissionsMatchingVehicleTrigger</members>
         <members>NZC_EmissionsMatchingWasteTrigger</members>
         <name>ApexTrigger</name>
     </types>
     <types>
+        <members>AirTravelEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>AirTravelEmssnFctr.MasterEmissionsSet__c</members>
+        <members>AirTravelEmssnFctr.Recalculate_Emissions__c</members>
+        <members>AirTravelEnrgyUse.Recalculate_Emissions__c</members>
         <members>ElectricityEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
         <members>ElectricityEmssnFctrSet.MasterEmissionsSet__c</members>
         <members>ElectricityEmssnFctrSet.Recalculate_Emissions__c</members>
+        <members>FrgtHaulingEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>FrgtHaulingEmssnFctr.MasterEmissionsSet__c</members>
+        <members>FrgtHaulingEmssnFctr.Recalculate_Emissions__c</members>
+        <members>FrgtHaulingEnrgyUse.Recalculate_Emissions__c</members>
         <members>GeneratedWaste.Recalculate_Emissions__c</members>
+        <members>GroundTravelEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>GroundTravelEmssnFctr.MasterEmissionsSet__c</members>
+        <members>GroundTravelEmssnFctr.Recalculate_Emissions__c</members>
+        <members>GroundTravelEnrgyUse.Recalculate_Emissions__c</members>
         <members>HotelStayEmssnFctr.EmissionsFactorUpdateYear__c</members>
         <members>HotelStayEmssnFctr.MasterEmissionsSet__c</members>
         <members>HotelStayEmssnFctr.Recalculate_Emissions__c</members>
@@ -69,6 +97,10 @@
         <members>RefrigerantEmssnFctr.EmissionsFactorUpdateYear__c</members>
         <members>RefrigerantEmssnFctr.MasterEmissionsSet__c</members>
         <members>RefrigerantEmssnFctr.Recalculate_Emissions__c</members>
+        <members>RentalCarEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>RentalCarEmssnFctr.MasterEmissionsSet__c</members>
+        <members>RentalCarEmssnFctr.Recalculate_Emissions__c</members>
+        <members>RentalCarEnrgyUse.Recalculate_Emissions__c</members>
         <members>StnryAssetEnrgyUse.Recalculate_Emissions__c</members>
         <members>VehicleAssetEnrgyUse.Recalculate_Emissions__c</members>
         <members>WstDispoEmssnFctrSet.EmissionsFactorUpdateYear__c</members>

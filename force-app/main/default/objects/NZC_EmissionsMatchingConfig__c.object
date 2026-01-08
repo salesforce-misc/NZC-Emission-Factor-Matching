@@ -6,7 +6,6 @@
         <fullName>AllowCustomTagMatching__c</fullName>
         <defaultValue>false</defaultValue>
         <description>Should custom matching based on fields be allowed? ( overrides emissions factors from asset )</description>
-        <externalId>false</externalId>
         <inlineHelpText>Should custom matching based on fields be allowed? ( overrides emissions factors from asset )</inlineHelpText>
         <label>AllowCustomTagMatching</label>
         <trackTrending>false</trackTrending>
@@ -28,7 +27,6 @@
         <fullName>DoMatchEmissionsOnInsert__c</fullName>
         <defaultValue>false</defaultValue>
         <description>Should the emissions matching happen on insert?</description>
-        <externalId>false</externalId>
         <inlineHelpText>Should the emissions matching happen on insert?</inlineHelpText>
         <label>Do match emissions on insert</label>
         <trackTrending>false</trackTrending>
@@ -38,7 +36,6 @@
         <fullName>DoMatchEmissionsOnUpdate__c</fullName>
         <defaultValue>false</defaultValue>
         <description>Should emissions matching happen on record update?</description>
-        <externalId>false</externalId>
         <inlineHelpText>Should emissions matching happen on record update?</inlineHelpText>
         <label>Do match emissions on update</label>
         <trackTrending>false</trackTrending>
@@ -74,7 +71,6 @@
         <fullName>doLog__c</fullName>
         <defaultValue>true</defaultValue>
         <description>Enable apex debugging messages</description>
-        <externalId>false</externalId>
         <inlineHelpText>Enable apex debugging messages</inlineHelpText>
         <label>do Log</label>
         <trackTrending>false</trackTrending>

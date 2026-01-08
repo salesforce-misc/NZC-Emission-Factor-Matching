@@ -6,61 +6,61 @@
  */
 
 @IsTest
-private class NZC_EmissionsMatchingHotelWrapperTest {
+private class NZC_EmissionsMatchingRntlCarWrapperTest {
 
     @TestSetup
     static void setup() {
-        NZC_EmissionsMatchingDatafactory.setupHotel('myVehicle');
+        NZC_EmissionsMatchingDatafactory.setupRentalCar('myRentalCar');
     }
 
     @IsTest
     static void testBaseConstructor() {
-        HotelStayEnrgyUse useRecord = [
-                SELECT Id, HotelStayEmssnFctrId, StartDate, Scope3EmssnSrcId
-                FROM HotelStayEnrgyUse
+        RentalCarEnrgyUse useRecord = [
+                SELECT Id, RentalCarEmssnFctrId, StartDate, Scope3EmssnSrcId
+                FROM RentalCarEnrgyUse
                 LIMIT 1
         ];
 
         Test.startTest();
-        NZC_EmissionsMatchingHotelWrapper wrapper = new NZC_EmissionsMatchingHotelWrapper(useRecord);
+        NZC_EmissionsMatchingRentalCarWrapper wrapper = new NZC_EmissionsMatchingRentalCarWrapper(useRecord);
         Test.stopTest();
 
         System.debug(wrapper);
 
         Assert.areEqual(useRecord.Scope3EmssnSrcId, wrapper.assetId);
         Assert.areEqual(useRecord.Id, wrapper.energyUseRecordId);
-        Assert.areEqual(NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE, wrapper.objectName);
+        Assert.areEqual(NZC_EmissionsMatchingConstants.OBJECT_RENTAL_CAR_USE, wrapper.objectName);
         Assert.areEqual(null, wrapper.fuelType);
         Assert.areEqual(useRecord.StartDate, wrapper.dateToMatch);
-        Assert.areEqual(useRecord.HotelStayEmssnFctrId, wrapper.masterEmissionsSetId);
+        Assert.areEqual(useRecord.RentalCarEmssnFctrId, wrapper.masterEmissionsSetId);
     }
 
     @IsTest
     static void testGeneratedConstructor() {
         String testId = 'generatedId';
 
-        Scope3EmssnSrc hotel = [
-                SELECT Id, HotelStayEmssnFctrId
+        Scope3EmssnSrc rentalCar = [
+                SELECT Id, RentalCarEmssnFctrId
                 FROM Scope3EmssnSrc
                 LIMIT 1
         ];
 
         Test.startTest();
-        NZC_EmissionsMatchingHotelWrapper wrapper = new NZC_EmissionsMatchingHotelWrapper(new HotelStayEnrgyUse(
-                Scope3EmssnSrcId = hotel.Id,
+        NZC_EmissionsMatchingRentalCarWrapper wrapper = new NZC_EmissionsMatchingRentalCarWrapper(new RentalCarEnrgyUse(
+                Scope3EmssnSrcId = rentalCar.Id,
                 StartDate = Date.today(),
-                HotelStayEmssnFctrId = hotel.HotelStayEmssnFctrId
+                RentalCarEmssnFctrId = rentalCar.RentalCarEmssnFctrId
         ),testId);
         Test.stopTest();
 
         System.debug(wrapper);
 
-        Assert.areEqual(hotel.Id, wrapper.assetId);
+        Assert.areEqual(rentalCar.Id, wrapper.assetId);
         Assert.areEqual(testId, wrapper.energyUseRecordId);
-        Assert.areEqual(NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE, wrapper.objectName);
+        Assert.areEqual(NZC_EmissionsMatchingConstants.OBJECT_RENTAL_CAR_USE, wrapper.objectName);
         Assert.areEqual(null, wrapper.fuelType);
         Assert.areEqual(Date.today(), wrapper.dateToMatch);
-        Assert.areEqual(hotel.HotelStayEmssnFctrId, wrapper.masterEmissionsSetId);
+        Assert.areEqual(rentalCar.RentalCarEmssnFctrId, wrapper.masterEmissionsSetId);
     }
 
 

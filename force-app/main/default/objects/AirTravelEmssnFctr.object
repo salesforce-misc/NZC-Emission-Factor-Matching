@@ -11,9 +11,9 @@
         <fullName>MasterEmissionsSet__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <label>MasterEmissionsSet</label>
-        <referenceTo>RefrigerantEmssnFctr</referenceTo>
-        <relationshipLabel>Refrigerant Emissions Factors</relationshipLabel>
-        <relationshipName>Refrigerant_Emissions_Factors</relationshipName>
+        <referenceTo>AirTravelEmssnFctr</referenceTo>
+        <relationshipLabel>Air Travel Emissions Factors</relationshipLabel>
+        <relationshipName>Air_Travel_Emissions_Factors</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <type>Lookup</type>

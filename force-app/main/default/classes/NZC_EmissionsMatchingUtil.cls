@@ -44,6 +44,18 @@ public with sharing class NZC_EmissionsMatchingUtil {
             if (objectType == NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE) {
                 completedWrapper.add(new NZC_EmissionsMatchingHotelWrapper((HotelStayEnrgyUse) energyUse));
             }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_FREIGHT_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingFreightWrapper((FrgtHaulingEnrgyUse) energyUse));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_AIR_TRAVEL_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingAirTravelWrapper((AirTravelEnrgyUse) energyUse));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_GROUND_TRAVEL_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingGroundTravelWrapper((GroundTravelEnrgyUse) energyUse));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_RENTAL_CAR_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingRentalCarWrapper((RentalCarEnrgyUse) energyUse));
+            }
         }
         NZC_EmissionsMatchingLog.log('generated wrappers', completedWrapper.size());
 
@@ -69,6 +81,18 @@ public with sharing class NZC_EmissionsMatchingUtil {
             }
             if (objectType == NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE) {
                 completedWrapper.add(new NZC_EmissionsMatchingHotelWrapper((HotelStayEnrgyUse) generatedIdMap.get(generatedRecordId), generatedRecordId));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_FREIGHT_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingFreightWrapper((FrgtHaulingEnrgyUse) generatedIdMap.get(generatedRecordId), generatedRecordId));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_AIR_TRAVEL_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingAirTravelWrapper((AirTravelEnrgyUse) generatedIdMap.get(generatedRecordId), generatedRecordId));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_GROUND_TRAVEL_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingGroundTravelWrapper((GroundTravelEnrgyUse) generatedIdMap.get(generatedRecordId), generatedRecordId));
+            }
+            if (objectType == NZC_EmissionsMatchingConstants.OBJECT_RENTAL_CAR_USE) {
+                completedWrapper.add(new NZC_EmissionsMatchingRentalCarWrapper((RentalCarEnrgyUse) generatedIdMap.get(generatedRecordId), generatedRecordId));
             }
         }
         NZC_EmissionsMatchingLog.log('generated wrappers with temp id', completedWrapper.size());
