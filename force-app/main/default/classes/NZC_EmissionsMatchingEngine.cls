@@ -137,16 +137,19 @@ public with sharing class NZC_EmissionsMatchingEngine {
         Set<String> customMatchValues = customMatchingKeys;
 
         for (String objectName : customMatchingEmissionsObjectNames.keySet()) {
-            List<String> fieldsNeeded = new List<String>();
-            List<String> whereClauses = new List<String>();
+            Set<String> fieldsNeeded = new Set<String>();
+            Set<String> whereClauses = new Set<String>();
             for (String hashKey : customMatchingEmissionsObjectNames.get(objectName)) {
                 // get fields needed from custom MTD
                 fieldsNeeded.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c);
                 whereClauses.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c + ' IN: customMatchValues');
             }
+            NZC_EmissionsMatchingLog.log('object:', objectName);
+            NZC_EmissionsMatchingLog.log('matching fields:', fieldsNeeded);
+            NZC_EmissionsMatchingLog.log('where clauses:', whereClauses);
             String query = 'SELECT Id, ' +
-                    String.join(fieldsNeeded, ',') + ' FROM ' + objectName+ ' WHERE ' +
-                    String.join(whereClauses, ' OR') + ' AND MasterEmissionsSet__c = NULL';
+                    String.join(new List<String>(fieldsNeeded), ',') + ' FROM ' + objectName+ ' WHERE ' +
+                    String.join(new List<String>(whereClauses), ' OR') + ' AND MasterEmissionsSet__c = NULL';
             for (SObject emissionSetQueried : Database.query(query)) {
                 // for later query we add emissions set to assetId emissionId map for date matching
                 masterEmissionsSetIdsByAssetHash.put(
