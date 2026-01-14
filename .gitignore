@@ -141,3 +141,6 @@ __pycache__/
 env/
 venv/
 ENV/
+
+# Build properties (contains sensitive credentials)
+build.properties
