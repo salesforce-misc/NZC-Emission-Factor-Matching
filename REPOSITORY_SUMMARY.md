@@ -149,6 +149,9 @@ This Salesforce managed package provides:
   - `FuelType__c`: Fuel type
   - `FieldsToClone__c`: Comma-separated list of fields to clone
 
+- **`NZC_Accelerators__mdt`**: Metadata type for NZC Accelerators configuration. Fields include:
+  - `NZC_EFM__c`: Checkbox field for NZC-EFM accelerator functionality
+
 ## Key Features
 
 ### 1. Date-Based Emissions Factor Matching
@@ -345,6 +348,7 @@ Allows administrators to control when matching occurs (on insert, update, or bot
 - **`NZC_EmissionsMatchingCustomLookups__mdt`**: Custom lookup field configuration
 - **`NZC_EmissionsMatchingCustomMatch__mdt`**: Custom field matching configuration
 - **`NZC_EmissionsMatchingTDCloning__mdt`**: T&D cloning field configuration
+- **`NZC_Accelerators__mdt`**: NZC Accelerators configuration with `NZC_EFM__c` checkbox field
 
 ### Relationships
 

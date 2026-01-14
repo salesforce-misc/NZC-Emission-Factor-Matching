@@ -53,6 +53,8 @@ export default class NzcEmissionsMatchingBatchStart extends LightningElement {
     }
 
     handlePolling = () => {
+        // Note: setTimeout is required for polling batch status in LWC
+        // This is a necessary async operation for status polling functionality
         setTimeout(async ()=>{
             await this.serverCallPollServer();
             if (this.serverBatchStatus && this.serverBatchStatus.batchStatus !== 'Completed') {
@@ -64,7 +66,7 @@ export default class NzcEmissionsMatchingBatchStart extends LightningElement {
     serverCallPollServer = async () => {
         this.serverBatchStatus = await getBatchStatus();
         if (this.serverBatchStatus) {
-            let {batchesProcessed, batchStatus, totalBatches, isBatchedStarted} = this.serverBatchStatus;
+            const {batchesProcessed, batchStatus, totalBatches, isBatchedStarted} = this.serverBatchStatus;
             [this.batchesProcessed, this.batchStatus, this.totalBatches, this.isBatchedStarted] = [batchesProcessed, batchStatus, totalBatches, isBatchedStarted];
         }
     }

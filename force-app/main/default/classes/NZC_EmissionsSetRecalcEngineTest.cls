@@ -16,7 +16,7 @@ private class NZC_EmissionsSetRecalcEngineTest {
     }
 
     @IsTest
-    static void testProcess_noUpdate() {
+    static void testProcessNoUpdate() {
         Map<Id, OtherEmssnFctrSet> emissionSets = new Map<Id, OtherEmssnFctrSet>([
                 SELECT Id, Recalculate_Emissions__c
                 FROM OtherEmssnFctrSet

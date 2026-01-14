@@ -10,7 +10,7 @@
 private class NZC_EmissionsMatchingBatchControllerTest {
 
     @IsTest
-    static void testClientAttemptBatchStart_matchBatch() {
+    static void testClientAttemptBatchStartMatchBatch() {
 
         NZC_EmissionsMatchingBatchController.currentBatchStatus results = NZC_EmissionsMatchingBatchController.clientAttemptMatchBatchStart();
 
@@ -19,13 +19,13 @@ private class NZC_EmissionsMatchingBatchControllerTest {
     }
 
     @IsTest
-    static void testcClientPollingStatus_matchBatch() {
+    static void testClientPollingStatusMatchBatch() {
         NZC_EmissionsMatchingBatchController.currentBatchStatus results = NZC_EmissionsMatchingBatchController.clientPollingMatchStatus();
         System.assert(!results.isBatchedStarted, 'expected no batch running');
     }
 
     @IsTest
-    static void testClientAttemptBatchStart_recalcBatch() {
+    static void testClientAttemptBatchStartRecalcBatch() {
 
         NZC_EmissionsMatchingBatchController.currentBatchStatus results = NZC_EmissionsMatchingBatchController.clientAttemptEmissionsSetRecalcBatchStart();
 
@@ -34,7 +34,7 @@ private class NZC_EmissionsMatchingBatchControllerTest {
     }
 
     @IsTest
-    static void testcClientPollingStatus_recalcBatch() {
+    static void testClientPollingStatusRecalcBatch() {
         NZC_EmissionsMatchingBatchController.currentBatchStatus results = NZC_EmissionsMatchingBatchController.clientPollingEmissionRecalcStatus();
         System.assert(!results.isBatchedStarted, 'expected no batch running');
     }

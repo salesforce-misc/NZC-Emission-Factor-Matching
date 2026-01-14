@@ -1,0 +1,349 @@
+/**
+ * Emissions Matching Setup - Anonymous Apex Script
+ * 
+ * This script automates the post-deployment setup steps:
+ * 1. Creates default Custom Setting record
+ * 2. Assigns Permission Set to users
+ * 3. Validates and reports setup status
+ * 
+ * INSTRUCTIONS:
+ * 1. Replace the USERNAMES_OR_IDS list below with actual usernames or user IDs
+ * 2. Copy this entire script into Developer Console (Debug > Open Execute Anonymous Window)
+ *    or VS Code (Command Palette > SFDX: Execute Anonymous Apex)
+ * 3. Execute the script
+ * 
+ * NOTE: This script includes the setup class code inline, so no deployment is required.
+ * 
+ * Example usernames:
+ * - 'user@example.com'
+ * - 'admin@myorg.com'
+ * 
+ * Example user IDs:
+ * - '005000000000001AAA'
+ */
+
+// ============================================
+// INLINE SETUP CLASS (DO NOT MODIFY)
+// ============================================
+
+// Define helper classes first (must be top-level in Anonymous Apex)
+public class SetupValidationResult {
+    public Boolean configExists = false;
+    public Boolean permissionSetExists = false;
+    public List<String> errors = new List<String>();
+    public List<String> warnings = new List<String>();
+    public void addError(String error) { errors.add(error); }
+    public void addWarning(String warning) { warnings.add(warning); }
+    public Boolean isValid() { return errors.isEmpty() && configExists; }
+}
+
+public class SetupException extends Exception {}
+
+// Define the setup class inline so it can run as Anonymous Apex
+// NOTE: This script requires the Custom Setting object to be deployed first
+// NOTE: Anonymous Apex doesn't support static fields, so we use instance variables
+public class NZC_EmissionsMatchingSetup {
+    // Constants (instance variables since Anonymous Apex doesn't support static fields)
+    private final String PERMISSION_SET_NAME = 'EmissionsMatching';
+    private final String CUSTOM_SETTING_NAME = 'Default';
+    private final String CUSTOM_SETTING_API_NAME = 'NZC_EmissionsMatchingConfig__c';
+
+    // Check if Custom Setting type exists
+    private Boolean isCustomSettingDeployed() {
+        try {
+            Schema.SObjectType objType = Schema.getGlobalDescribe().get(CUSTOM_SETTING_API_NAME);
+            return objType != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public SObject createDefaultConfig() {
+        // Verify Custom Setting is deployed
+        if (!isCustomSettingDeployed()) {
+            throw new SetupException('Custom Setting "' + CUSTOM_SETTING_API_NAME + '" not found. Please deploy the main codebase first.');
+        }
+        
+        // Use dynamic SOQL to query
+        String soql = 'SELECT Id, Name FROM ' + CUSTOM_SETTING_API_NAME + ' WHERE Name = \'' + String.escapeSingleQuotes(CUSTOM_SETTING_NAME) + '\' LIMIT 1';
+        List<SObject> existingConfigs = Database.query(soql);
+        
+        if (!existingConfigs.isEmpty()) {
+            System.debug('Default configuration already exists: ' + existingConfigs[0].Id);
+            return existingConfigs[0];
+        }
+        
+        // Create new record using SObject
+        SObject config = Schema.getGlobalDescribe().get(CUSTOM_SETTING_API_NAME).newSObject();
+        config.put('Name', CUSTOM_SETTING_NAME);
+        config.put('DateMatchingField__c', 'StartDate');
+        config.put('Emissions_Matching_Batch_Size__c', 200);
+        config.put('Emissions_Recalc_Batch_Size__c', 50);
+        config.put('doLog__c', true);
+        config.put('DoMatchEmissionsOnInsert__c', false);
+        config.put('DoMatchEmissionsOnUpdate__c', false);
+        config.put('AllowCustomTagMatching__c', false);
+        config.put('AllowAdvancedMatching__c', false);
+        config.put('AllowTransmissionDistribution__c', false);
+        
+        try {
+            insert config;
+            System.debug('Successfully created default configuration: ' + config.Id);
+            return config;
+        } catch (DmlException e) {
+            throw new SetupException('Failed to create default configuration: ' + e.getMessage());
+        }
+    }
+
+    public List<PermissionSetAssignment> assignPermissionSetToUsers(List<String> usernamesOrIds) {
+        if (usernamesOrIds == null || usernamesOrIds.isEmpty()) {
+            throw new SetupException('User list cannot be empty');
+        }
+        List<PermissionSet> permissionSets = [
+            SELECT Id, Name FROM PermissionSet WHERE Name = :PERMISSION_SET_NAME LIMIT 1
+        ];
+        if (permissionSets.isEmpty()) {
+            throw new SetupException('Permission Set "' + PERMISSION_SET_NAME + '" not found. Please ensure it is deployed.');
+        }
+        PermissionSet ps = permissionSets[0];
+        Set<String> usernameSet = new Set<String>();
+        Set<Id> idSet = new Set<Id>();
+        for (String identifier : usernamesOrIds) {
+            try {
+                Id userId = (Id)identifier;
+                idSet.add(userId);
+            } catch (Exception e) {
+                usernameSet.add(identifier);
+            }
+        }
+        List<User> users = [
+            SELECT Id, Username, Name FROM User WHERE Id IN :idSet OR Username IN :usernameSet
+        ];
+        if (users.isEmpty()) {
+            throw new SetupException('No users found matching the provided identifiers');
+        }
+        Set<Id> userIds = new Set<Id>();
+        for (User u : users) {
+            userIds.add(u.Id);
+        }
+        List<PermissionSetAssignment> existingAssignments = [
+            SELECT AssigneeId FROM PermissionSetAssignment 
+            WHERE PermissionSetId = :ps.Id AND AssigneeId IN :userIds
+        ];
+        Set<Id> alreadyAssigned = new Set<Id>();
+        for (PermissionSetAssignment psa : existingAssignments) {
+            alreadyAssigned.add(psa.AssigneeId);
+        }
+        List<PermissionSetAssignment> newAssignments = new List<PermissionSetAssignment>();
+        for (User u : users) {
+            if (!alreadyAssigned.contains(u.Id)) {
+                newAssignments.add(new PermissionSetAssignment(AssigneeId = u.Id, PermissionSetId = ps.Id));
+            }
+        }
+        if (newAssignments.isEmpty()) {
+            System.debug('All specified users already have the permission set assigned');
+            return new List<PermissionSetAssignment>();
+        }
+        try {
+            insert newAssignments;
+            System.debug('Successfully assigned permission set to ' + newAssignments.size() + ' user(s)');
+            return newAssignments;
+        } catch (DmlException e) {
+            throw new SetupException('Failed to assign permission set: ' + e.getMessage());
+        }
+    }
+
+    public SetupValidationResult validateSetup() {
+        SetupValidationResult result = new SetupValidationResult();
+        
+        if (!isCustomSettingDeployed()) {
+            result.addError('Custom Setting type "' + CUSTOM_SETTING_API_NAME + '" not found. Please deploy the main codebase first.');
+            return result;
+        }
+        
+        String soql = 'SELECT Id, Name, DateMatchingField__c, Emissions_Matching_Batch_Size__c, Emissions_Recalc_Batch_Size__c FROM ' + CUSTOM_SETTING_API_NAME + ' LIMIT 1';
+        List<SObject> configs = Database.query(soql);
+        
+        if (configs.isEmpty()) {
+            result.addError('Custom Setting record not found. Run createDefaultConfig() first.');
+        } else {
+            result.configExists = true;
+            SObject config = configs[0];
+            if (String.isBlank((String)config.get('DateMatchingField__c'))) {
+                result.addError('DateMatchingField__c is not set');
+            }
+            Decimal batchSize = (Decimal)config.get('Emissions_Matching_Batch_Size__c');
+            if (batchSize == null || batchSize <= 0) {
+                result.addError('Emissions_Matching_Batch_Size__c is not set or invalid');
+            }
+            Decimal recalcSize = (Decimal)config.get('Emissions_Recalc_Batch_Size__c');
+            if (recalcSize == null || recalcSize <= 0) {
+                result.addError('Emissions_Recalc_Batch_Size__c is not set or invalid');
+            }
+        }
+        List<PermissionSet> permissionSets = [
+            SELECT Id, Name FROM PermissionSet WHERE Name = :PERMISSION_SET_NAME LIMIT 1
+        ];
+        if (permissionSets.isEmpty()) {
+            result.addWarning('Permission Set "' + PERMISSION_SET_NAME + '" not found. Ensure it is deployed.');
+        } else {
+            result.permissionSetExists = true;
+        }
+        return result;
+    }
+
+    public String getSetupStatus() {
+        SetupValidationResult validation = validateSetup();
+        String status = '';
+        status += '=== Emissions Matching Setup Status ===\n\n';
+        status += 'Custom Setting: ';
+        if (validation.configExists && isCustomSettingDeployed()) {
+            String soql = 'SELECT Id, Name, DateMatchingField__c, Emissions_Matching_Batch_Size__c, Emissions_Recalc_Batch_Size__c, doLog__c, DoMatchEmissionsOnInsert__c, DoMatchEmissionsOnUpdate__c FROM ' + CUSTOM_SETTING_API_NAME + ' LIMIT 1';
+            List<SObject> configs = Database.query(soql);
+            if (!configs.isEmpty()) {
+                SObject config = configs[0];
+                status += '✓ EXISTS\n';
+                status += '  - Name: ' + config.get('Name') + '\n';
+                status += '  - Date Matching Field: ' + config.get('DateMatchingField__c') + '\n';
+                status += '  - Matching Batch Size: ' + config.get('Emissions_Matching_Batch_Size__c') + '\n';
+                status += '  - Recalc Batch Size: ' + config.get('Emissions_Recalc_Batch_Size__c') + '\n';
+                status += '  - Logging Enabled: ' + config.get('doLog__c') + '\n';
+            }
+        } else {
+            status += '✗ NOT FOUND\n';
+        }
+        status += '\nPermission Set: ';
+        if (validation.permissionSetExists) {
+            List<PermissionSet> psList = [SELECT Id, Name FROM PermissionSet WHERE Name = :PERMISSION_SET_NAME LIMIT 1];
+            if (!psList.isEmpty()) {
+                status += '✓ EXISTS\n';
+                status += '  - Name: ' + psList[0].Name + '\n';
+                status += '  - ID: ' + psList[0].Id + '\n';
+                Integer assignmentCount = [SELECT COUNT() FROM PermissionSetAssignment WHERE PermissionSetId = :psList[0].Id];
+                status += '  - Assigned to ' + assignmentCount + ' user(s)\n';
+            }
+        } else {
+            status += '✗ NOT FOUND\n';
+        }
+        status += '\n';
+        if (!validation.errors.isEmpty()) {
+            status += 'Errors:\n';
+            for (String error : validation.errors) {
+                status += '  ✗ ' + error + '\n';
+            }
+            status += '\n';
+        }
+        if (!validation.warnings.isEmpty()) {
+            status += 'Warnings:\n';
+            for (String warning : validation.warnings) {
+                status += '  ⚠ ' + warning + '\n';
+            }
+            status += '\n';
+        }
+        status += 'Overall Status: ';
+        if (validation.isValid()) {
+            status += '✓ SETUP COMPLETE\n';
+        } else {
+            status += '✗ SETUP INCOMPLETE\n';
+        }
+        return status;
+    }
+}
+
+// ============================================
+// CONFIGURATION - MODIFY THIS SECTION
+// ============================================
+
+// List of usernames or user IDs to assign the EmissionsMatching permission set
+// Replace with your actual usernames or user IDs
+List<String> USERNAMES_OR_IDS = new List<String>{
+    // Add usernames or user IDs here, one per line
+    // Example: 'user@example.com',
+    // Example: '005000000000001AAA'
+
+    'gus@nzc.preview'
+};
+
+// ============================================
+// SETUP EXECUTION - DO NOT MODIFY BELOW
+// ============================================
+
+System.debug('=== Starting Emissions Matching Setup ===\n');
+
+// Create instance of setup class (Anonymous Apex doesn't support static methods)
+NZC_EmissionsMatchingSetup setup = new NZC_EmissionsMatchingSetup();
+
+try {
+    // Step 1: Create Default Custom Setting
+    System.debug('Step 1: Creating default Custom Setting...');
+    SObject config = setup.createDefaultConfig();
+    System.debug('✓ Custom Setting created: ' + config.Id);
+    System.debug('  - Name: ' + config.get('Name'));
+    System.debug('  - Date Matching Field: ' + config.get('DateMatchingField__c'));
+    System.debug('  - Matching Batch Size: ' + config.get('Emissions_Matching_Batch_Size__c'));
+    System.debug('  - Recalc Batch Size: ' + config.get('Emissions_Recalc_Batch_Size__c'));
+    System.debug('');
+
+    // Step 2: Assign Permission Set (if users specified)
+    if (USERNAMES_OR_IDS != null && !USERNAMES_OR_IDS.isEmpty()) {
+        System.debug('Step 2: Assigning Permission Set to users...');
+        List<PermissionSetAssignment> assignments = setup.assignPermissionSetToUsers(USERNAMES_OR_IDS);
+        
+        if (assignments.isEmpty()) {
+            System.debug('⚠ All specified users already have the permission set assigned');
+        } else {
+            System.debug('✓ Permission Set assigned to ' + assignments.size() + ' user(s):');
+            for (PermissionSetAssignment psa : assignments) {
+                System.debug('  - User ID: ' + psa.AssigneeId);
+            }
+        }
+        System.debug('');
+    } else {
+        System.debug('Step 2: Skipping Permission Set assignment (no users specified)');
+        System.debug('  To assign permission set, add usernames or user IDs to USERNAMES_OR_IDS list');
+        System.debug('');
+    }
+
+    // Step 3: Validate Setup
+    System.debug('Step 3: Validating setup...');
+    SetupValidationResult validation = setup.validateSetup();
+    
+    if (validation.isValid()) {
+        System.debug('✓ Setup validation passed');
+    } else {
+        System.debug('✗ Setup validation failed:');
+        for (String error : validation.errors) {
+            System.debug('  - ' + error);
+        }
+    }
+    
+    if (!validation.warnings.isEmpty()) {
+        System.debug('⚠ Warnings:');
+        for (String warning : validation.warnings) {
+            System.debug('  - ' + warning);
+        }
+    }
+    System.debug('');
+
+    // Step 4: Display Setup Status
+    System.debug('Step 4: Setup Status Report');
+    System.debug('================================');
+    String status = setup.getSetupStatus();
+    System.debug(status);
+    System.debug('================================');
+    
+    System.debug('\n=== Setup Complete ===');
+    System.debug('Next steps:');
+    System.debug('1. Verify Custom Setting record in Setup > Custom Settings');
+    System.debug('2. Verify Permission Set assignments in Setup > Users > Permission Set Assignments');
+    System.debug('3. Configure Page Layouts (see scripts/configure-page-layouts.sh or .ps1)');
+    System.debug('4. Optionally configure Custom Metadata for advanced features');
+    System.debug('5. Set up emissions set hierarchy manually (data-dependent)');
+
+} catch (SetupException e) {
+    System.debug('✗ Setup Error: ' + e.getMessage());
+    System.debug('Stack Trace: ' + e.getStackTraceString());
+} catch (Exception e) {
+    System.debug('✗ Unexpected Error: ' + e.getMessage());
+    System.debug('Stack Trace: ' + e.getStackTraceString());
+}

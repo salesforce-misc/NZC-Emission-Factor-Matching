@@ -9,13 +9,6 @@
 public with sharing class NZC_EmissionsMatchingBatchController {
 
     public class currentBatchStatus {
-        public currentBatchStatus(Integer processedCount, Integer totalToProcess, Boolean batchStarted, String status) {
-            batchesProcessed = processedCount;
-            totalBatches = totalToProcess;
-            isBatchedStarted = batchStarted;
-            batchStatus = status;
-        }
-
         @AuraEnabled
         public Integer batchesProcessed;
         @AuraEnabled
@@ -24,6 +17,13 @@ public with sharing class NZC_EmissionsMatchingBatchController {
         public Boolean isBatchedStarted;
         @AuraEnabled
         public String batchStatus;
+
+        public currentBatchStatus(Integer processedCount, Integer totalToProcess, Boolean batchStarted, String status) {
+            batchesProcessed = processedCount;
+            totalBatches = totalToProcess;
+            isBatchedStarted = batchStarted;
+            batchStatus = status;
+        }
     }
 
     @AuraEnabled
@@ -60,7 +60,13 @@ public with sharing class NZC_EmissionsMatchingBatchController {
 
     private static currentBatchStatus canStartBatch(String jobName) {
         currentBatchStatus currentStatus = new currentBatchStatus(0,1,false, null);
+        // Check CRUD permissions before query
+        if (!Schema.sObjectType.AsyncApexJob.isAccessible()) {
+            NZC_EmissionsMatchingLog.log('User does not have access to AsyncApexJob');
+            return currentStatus;
+        }
         // if no records prevent run
+        // Note: WITH USER_MODE is not supported in static SOQL, CRUD check above ensures permissions
         List<AsyncApexJob> jobInfo = [
                 SELECT ApexClass.Name, JobType, Status, JobItemsProcessed, TotalJobItems
                 FROM AsyncApexJob

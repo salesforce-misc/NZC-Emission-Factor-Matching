@@ -132,6 +132,8 @@
         <enabled>true</enabled>
         <name>NZC_EmissionsMatchingCustomMatch__mdt</name>
     </customMetadataTypeAccesses>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>AirTravelEmssnFctr.EmissionsFactorUpdateYear__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -139,6 +141,7 @@
         <editable>true</editable>
         <field>AirTravelEmssnFctr.MasterEmissionsSet__c</field>
         <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>AirTravelEnrgyUse.Recalculate_Emissions__c</field>
@@ -189,7 +192,7 @@
         <field>GroundTravelEnrgyUse.Recalculate_Emissions__c</field>
         <readable>true</readable>
     </fieldPermissions>
-        <fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>RentalCarEmssnFctr.EmissionsFactorUpdateYear__c</field>
         <readable>true</readable>

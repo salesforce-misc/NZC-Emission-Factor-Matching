@@ -10,8 +10,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
     public static Boolean doEmissionsMatchOnInsert {
         get {
             if (doEmissionsMatchOnInsert == null
-                    && matchingConfig.get('DoMatchEmissionsOnInsert__c') != null)
+                    && matchingConfig.get('DoMatchEmissionsOnInsert__c') != null) {
                 doEmissionsMatchOnInsert = matchingConfig.DoMatchEmissionsOnInsert__c;
+            }
 
             return doEmissionsMatchOnInsert == true? doEmissionsMatchOnInsert : false;
         }
@@ -24,8 +25,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
     public static Boolean doEmissionsMatchOnUpdate {
         get {
             if (doEmissionsMatchOnUpdate == null
-                    && matchingConfig.get('DoMatchEmissionsOnUpdate__c') != null)
+                    && matchingConfig.get('DoMatchEmissionsOnUpdate__c') != null) {
                 doEmissionsMatchOnUpdate = matchingConfig.DoMatchEmissionsOnUpdate__c;
+            }
 
             return doEmissionsMatchOnUpdate == true ? doEmissionsMatchOnUpdate : false;
         }
@@ -41,7 +43,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
                 dateMatchingField = NZC_EmissionsMatchingConstants.FIELD_EUR_STARTDATE;
             }
 
-            if (matchingConfig != null && String.isNotBlank(matchingConfig.DateMatchingField__c)) dateMatchingField = matchingConfig.DateMatchingField__c;
+            if (matchingConfig != null && String.isNotBlank(matchingConfig.DateMatchingField__c)) {
+                dateMatchingField = matchingConfig.DateMatchingField__c;
+            }
 
             return dateMatchingField;
         }
@@ -56,26 +60,34 @@ public with sharing class NZC_EmissionsMatchingMTD {
     public static Boolean doLog {
         get {
             doLog = true;
-            if (matchingConfig != null && matchingConfig.get('doLog__c') != null) doLog = matchingConfig.doLog__c;
+            if (matchingConfig != null && matchingConfig.get('doLog__c') != null) {
+                doLog = matchingConfig.doLog__c;
+            }
 
             return doLog;
         }
 
         set {
-            if (Test.isRunningTest()) doLog = value;
+            if (Test.isRunningTest()) {
+                doLog = value;
+            }
         }
     }
 
     public static Boolean allowCustomTagMatching {
         get {
             allowCustomTagMatching = false;
-            if (matchingConfig != null && matchingConfig.get('allowCustomTagMatching__c') != null) allowCustomTagMatching = matchingConfig.allowCustomTagMatching__c;
+            if (matchingConfig != null && matchingConfig.get('allowCustomTagMatching__c') != null) {
+                allowCustomTagMatching = matchingConfig.allowCustomTagMatching__c;
+            }
 
             return allowCustomTagMatching;
         }
 
         set {
-            if (Test.isRunningTest()) allowCustomTagMatching = value;
+            if (Test.isRunningTest()) {
+                allowCustomTagMatching = value;
+            }
         }
     }
 
@@ -83,7 +95,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
         get {
             emissionsMatchBatchSize = NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_SIZE;
 
-            if (matchingConfig != null && matchingConfig.get('Emissions_Matching_Batch_Size__c') != null) emissionsMatchBatchSize = Integer.valueOf(matchingConfig.get('Emissions_Matching_Batch_Size__c'));
+            if (matchingConfig != null && matchingConfig.get('Emissions_Matching_Batch_Size__c') != null) {
+                emissionsMatchBatchSize = Integer.valueOf(matchingConfig.get('Emissions_Matching_Batch_Size__c'));
+            }
 
             return emissionsMatchBatchSize;
         }
@@ -94,7 +108,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
         get {
             emissionsRecalcBatchSize = NZC_EmissionsMatchingConstants.EMISSIONS_RECALC_BATCH_SIZE;
 
-            if (matchingConfig != null && matchingConfig.get('Emissions_Recalc_Batch_Size__c') != null) emissionsRecalcBatchSize = Integer.valueOf(matchingConfig.get('Emissions_Recalc_Batch_Size__c'));
+            if (matchingConfig != null && matchingConfig.get('Emissions_Recalc_Batch_Size__c') != null) {
+                emissionsRecalcBatchSize = Integer.valueOf(matchingConfig.get('Emissions_Recalc_Batch_Size__c'));
+            }
 
             return emissionsRecalcBatchSize;
         }
@@ -109,7 +125,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
             return customMatchingRules;
         }
         set {
-            if (Test.isRunningTest()) customMatchingRules = value;
+            if (Test.isRunningTest()) {
+                customMatchingRules = value;
+            }
         }
     }
 
@@ -137,7 +155,9 @@ public with sharing class NZC_EmissionsMatchingMTD {
             return matchingConfig;
         }
         set {
-            if (Test.isRunningTest()) matchingConfig = value;
+            if (Test.isRunningTest()) {
+                matchingConfig = value;
+            }
         }
     }
 }

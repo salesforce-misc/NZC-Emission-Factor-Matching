@@ -39,9 +39,15 @@ private class NZC_EmissionsMatchingEngineTest {
                 FROM StnryAssetEnrgyUse
         ];
         for(StnryAssetEnrgyUse stationUse : stationUseList) {
-            if (String.isNotBlank(stationUse.RefrigerantEmssnFctrId)) stationSetIdsFoundOnRecords.add(stationUse.RefrigerantEmssnFctrId);
-            if (String.isNotBlank(stationUse.OtherEmssnFctrId)) stationSetIdsFoundOnRecords.add(stationUse.OtherEmssnFctrId);
-            if (String.isNotBlank(stationUse.ElectricityEmissionFactorsId)) stationSetIdsFoundOnRecords.add(stationUse.ElectricityEmissionFactorsId);
+            if (String.isNotBlank(stationUse.RefrigerantEmssnFctrId)) {
+                stationSetIdsFoundOnRecords.add(stationUse.RefrigerantEmssnFctrId);
+            }
+            if (String.isNotBlank(stationUse.OtherEmssnFctrId)) {
+                stationSetIdsFoundOnRecords.add(stationUse.OtherEmssnFctrId);
+            }
+            if (String.isNotBlank(stationUse.ElectricityEmissionFactorsId)) {
+                stationSetIdsFoundOnRecords.add(stationUse.ElectricityEmissionFactorsId);
+            }
             emissionWrappers.add(new NZC_EmissionsMatchingStationaryWrapper(stationUse));
             updateMap.put(stationUse.Id, stationUse);
         }
@@ -54,7 +60,9 @@ private class NZC_EmissionsMatchingEngineTest {
                 FROM VehicleAssetEnrgyUse
         ];
         for(VehicleAssetEnrgyUse vehicleUse : vehicleUseList) {
-            if (String.isNotBlank(vehicleUse.OtherEmssnFctrId)) vehicleSetIdsFoundOnRecords.add(vehicleUse.OtherEmssnFctrId);
+            if (String.isNotBlank(vehicleUse.OtherEmssnFctrId)) {
+                vehicleSetIdsFoundOnRecords.add(vehicleUse.OtherEmssnFctrId);
+            }
             emissionWrappers.add(new NZC_EmissionsMatchingVehicleWrapper(vehicleUse));
             updateMap.put(vehicleUse.Id, vehicleUse);
         }
@@ -194,7 +202,7 @@ private class NZC_EmissionsMatchingEngineTest {
     }
 
     @IsTest
-    static void testMatchingMarketBasedEmissions_insert() {
+    static void testMatchingMarketBasedEmissionsInsert() {
         StnryAssetEnvrSrc asset = [
                 SELECT Id
                 FROM StnryAssetEnvrSrc
@@ -254,7 +262,7 @@ private class NZC_EmissionsMatchingEngineTest {
     }
 
     @IsTest
-    static void testMatchingMarketBasedEmissions_update() {
+    static void testMatchingMarketBasedEmissionsUpdate() {
         StnryAssetEnvrSrc asset = [
                 SELECT Id
                 FROM StnryAssetEnvrSrc

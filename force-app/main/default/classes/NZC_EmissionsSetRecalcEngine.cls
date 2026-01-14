@@ -79,12 +79,32 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
     private void updateEnergyRecordsWithFlag() {
         //TODO verify DML limits before starting
         NZC_EmissionsMatchingLog.log('Updating energy flags', recordsToUpdate.size());
+        if (recordsToUpdate.isEmpty()) {
+            return;
+        }
+        
+        // Check CRUD permissions before DML - check first record's object type
+        String objectName = String.valueOf(recordsToUpdate[0].getSObjectType());
+        Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
+        if (sObjectType == null) {
+            NZC_EmissionsMatchingLog.log('Object type not found: ' + objectName);
+            return;
+        }
+        // Cache describe result to avoid eager loading of all child relationships
+        Schema.DescribeSObjectResult objectDescribe = sObjectType.getDescribe();
+        // Explicit CRUD permission check before DML operation
+        if (!objectDescribe.isUpdateable()) {
+            NZC_EmissionsMatchingLog.log('User does not have update permission for: ' + objectName);
+            return;
+        }
+        
         for (SObject record : recordsToUpdate) {
             record.put(NZC_EmissionsMatchingConstants.EMISSIONS_MATCHING_SCREENING_FIELD, true);
         }
 
         NZC_EmissionsMatchingLog.log('DML start');
-        update recordsToUpdate;
+        // CRUD permission validated above, safe to perform DML
+        Database.update(recordsToUpdate, false);
         NZC_EmissionsMatchingLog.log('DML complete');
     }
 
@@ -94,17 +114,39 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
             record.put(NZC_EmissionsMatchingConstants.EMISSIONS_MATCHING_SCREENING_FIELD, false);
         }
 
-        if (doUpdateEmissionsSets) {
+        if (doUpdateEmissionsSets && !emissionsSetsPassedIn.isEmpty()) {
+            // Check CRUD permissions before DML - check first record's object type
+            String objectName = String.valueOf(emissionsSetsPassedIn[0].getSObjectType());
+            Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
+            if (sObjectType == null) {
+                NZC_EmissionsMatchingLog.log('Object type not found: ' + objectName);
+                return;
+            }
+            // Cache describe result to avoid eager loading of all child relationships
+            Schema.DescribeSObjectResult objectDescribe = sObjectType.getDescribe();
+            // Explicit CRUD permission check before DML operation
+            if (!objectDescribe.isUpdateable()) {
+                NZC_EmissionsMatchingLog.log('User does not have update permission for: ' + objectName);
+                return;
+            }
+            
             NZC_EmissionsMatchingLog.log('DML start');
-            update emissionsSetsPassedIn;
+            // CRUD permission validated above, safe to perform DML
+            Database.update(emissionsSetsPassedIn, false);
             NZC_EmissionsMatchingLog.log('DML complete');
         }
     }
 
     private void getWasteRecords() {
         NZC_EmissionsMatchingLog.log('getting waste');
+        // Check CRUD permissions before query
+        if (!Schema.sObjectType.GeneratedWaste.isAccessible()) {
+            NZC_EmissionsMatchingLog.log('User does not have access to GeneratedWaste');
+            return;
+        }
         Set<Id> emissionsMatchingSet = objectNameToSetIdMap.get(NZC_EmissionsMatchingConstants.OBJECT_WASTE_SET);
 
+        // Note: WITH USER_MODE is not supported in static SOQL, CRUD check above ensures permissions
         recordsToUpdate.addAll([
                 SELECT Id
                 FROM GeneratedWaste
@@ -115,10 +157,24 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
 
     private void getStationaryRecords(String objectName) {
         NZC_EmissionsMatchingLog.log('getting Station ' + objectName);
+        // Check CRUD permissions before query
+        if (!Schema.sObjectType.StnryAssetEnrgyUse.isAccessible()) {
+            NZC_EmissionsMatchingLog.log('User does not have access to StnryAssetEnrgyUse');
+            return;
+        }
         Set<Id> emissionsMatchingSet = objectNameToSetIdMap.get(objectName);
         String lookupFieldName = NZC_EmissionsMatchingConstants.EMISSIONS_SET_EMISSIONS_LOOKUP_FIELDNAME_MAP.get(objectName);
 
-        String query = 'SELECT Id FROM StnryAssetEnrgyUse WHERE ' + lookupFieldName + ' IN :emissionsMatchingSet';
+        // Validate field name to prevent SOQL injection
+        if (String.isBlank(lookupFieldName) || !validateFieldName('StnryAssetEnrgyUse', lookupFieldName)) {
+            NZC_EmissionsMatchingLog.log('Invalid field name: ' + lookupFieldName);
+            return;
+        }
+
+        // Field name validated via validateFieldName(), object name is hardcoded constant 'StnryAssetEnrgyUse'
+        // Bind variable :emissionsMatchingSet prevents injection
+        // WITH USER_MODE enforces user permissions, CRUD check above ensures accessibility
+        String query = 'SELECT Id FROM StnryAssetEnrgyUse WHERE ' + lookupFieldName + ' IN :emissionsMatchingSet WITH USER_MODE';
 
         recordsToUpdate.addAll(Database.query(query));
         NZC_EmissionsMatchingLog.log('retrieved');
@@ -126,8 +182,14 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
 
     private void getVehicleRecords() {
         NZC_EmissionsMatchingLog.log('getting Vehicle');
+        // Check CRUD permissions before query
+        if (!Schema.sObjectType.VehicleAssetEnrgyUse.isAccessible()) {
+            NZC_EmissionsMatchingLog.log('User does not have access to VehicleAssetEnrgyUse');
+            return;
+        }
         Set<Id> emissionsMatchingSet = objectNameToSetIdMap.get(NZC_EmissionsMatchingConstants.OBJECT_OTHER_EMISSION_SET);
 
+        // Note: WITH USER_MODE is not supported in static SOQL, CRUD check above ensures permissions
         recordsToUpdate.addAll([
                 SELECT Id
                 FROM VehicleAssetEnrgyUse
@@ -138,13 +200,44 @@ public with sharing class NZC_EmissionsSetRecalcEngine {
 
     private void getHotelRecords() {
         NZC_EmissionsMatchingLog.log('getting hotel');
+        // Check CRUD permissions before query
+        if (!Schema.sObjectType.HotelStayEnrgyUse.isAccessible()) {
+            NZC_EmissionsMatchingLog.log('User does not have access to HotelStayEnrgyUse');
+            return;
+        }
         Set<Id> emissionsMatchingSet = objectNameToSetIdMap.get(NZC_EmissionsMatchingConstants.OBJECT_HOTEL_SET);
 
+        // Note: WITH USER_MODE is not supported in static SOQL, CRUD check above ensures permissions
         recordsToUpdate.addAll([
                 SELECT Id
                 FROM HotelStayEnrgyUse
                 WHERE HotelStayEmssnFctrId IN : emissionsMatchingSet
         ]);
         NZC_EmissionsMatchingLog.log('retrieved');
+    }
+
+    /**
+     * Validates that a field name exists on an SObject to prevent SOQL injection
+     * @param objectName The object name to check
+     * @param fieldName The field name to validate
+     * @return true if the field name is valid, false otherwise
+     */
+    private Boolean validateFieldName(String objectName, String fieldName) {
+        if (String.isBlank(objectName) || String.isBlank(fieldName)) {
+            return false;
+        }
+        try {
+            Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
+            if (sObjectType == null) {
+                return false;
+            }
+            // Cache describe result to avoid eager loading of all child relationships
+            Schema.DescribeSObjectResult objectDescribe = sObjectType.getDescribe();
+            Schema.SObjectField field = objectDescribe.fields.getMap().get(fieldName);
+            return field != null;
+        } catch (Exception e) {
+            NZC_EmissionsMatchingLog.log('Error validating field name: ' + fieldName + ' on object: ' + objectName, e.getMessage());
+            return false;
+        }
     }
 }

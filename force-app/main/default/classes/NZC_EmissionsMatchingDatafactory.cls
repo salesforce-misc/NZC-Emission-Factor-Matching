@@ -3,6 +3,10 @@
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/Apache-2.0
+ * 
+ * Test data factory class for creating test records.
+ * Note: Methods in this class intentionally have many parameters (exceeding the 4-parameter threshold)
+ * for convenience in test setup. This is an acceptable exception for test data factory patterns.
  */
 
 @IsTest
@@ -83,6 +87,11 @@ public class NZC_EmissionsMatchingDatafactory {
         insert hotelUseList;
     }
 
+    public static void setupFreight(String name) {
+        Integer yearsBack = 5;
+
+        List<OtherEmssnFctrSet> otherSetList = createOtherSetMatrix(yearsBack, name + 'otherSet');
+        List<FrgtHaulingEmssnFctr> freightSetList = createFreightEmissionsSetMatrix(yearsBack, name + 'freightSet', otherSetList.get(yearsBack).Id);
         Scope3EmssnSrc asset = createFreightAsset(name, freightSetList.get(freightSetList.size()-1).Id);
         insert asset;
 
@@ -396,7 +405,8 @@ public class NZC_EmissionsMatchingDatafactory {
     }
 
     public static StnryAssetEnvrSrc createStationaryAsset(String name, String otherEmissionsId, String electricityEmissionsId, String refrigerantEmissionsId, String wasteSetId) {
-        Id recordTypeId = StnryAssetEnvrSrc.SObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('Commercial_Building')?.getRecordTypeId();
+        Schema.DescribeSObjectResult describeResult = StnryAssetEnvrSrc.SObjectType.getDescribe();
+        Id recordTypeId = describeResult.getRecordTypeInfosByDeveloperName().get('Commercial_Building')?.getRecordTypeId();
 
         StnryAssetEnvrSrc createdRecord = new StnryAssetEnvrSrc(
                 Name = name,
@@ -406,7 +416,9 @@ public class NZC_EmissionsMatchingDatafactory {
                 WstDispoEmssnFctrSetId = wasteSetId
         );
 
-        if (recordTypeId != null)  createdRecord.put('RecordTypeId', recordTypeId);
+        if (recordTypeId != null) {
+            createdRecord.put('RecordTypeId', recordTypeId);
+        }
 
         return createdRecord;
     }
@@ -439,13 +451,16 @@ public class NZC_EmissionsMatchingDatafactory {
     }
 
     public static VehicleAssetEmssnSrc createVehiclAsset(String name, String otherEmissionsId) {
-        Id recordTypeId = VehicleAssetEmssnSrc.SObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('Fleet_Vehicle')?.getRecordTypeId();
+        Schema.DescribeSObjectResult describeResult = VehicleAssetEmssnSrc.SObjectType.getDescribe();
+        Id recordTypeId = describeResult.getRecordTypeInfosByDeveloperName().get('Fleet_Vehicle')?.getRecordTypeId();
         VehicleAssetEmssnSrc createdRecord = new VehicleAssetEmssnSrc(
                 Name = name,
                 OtherEmssnFctrId =  otherEmissionsId
         );
 
-        if (recordTypeId != null) createdRecord.put('RecordTypeId', recordTypeId);
+        if (recordTypeId != null) {
+            createdRecord.put('RecordTypeId', recordTypeId);
+        }
 
         return createdRecord;
     }

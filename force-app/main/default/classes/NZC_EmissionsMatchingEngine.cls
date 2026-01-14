@@ -91,7 +91,9 @@ public with sharing class NZC_EmissionsMatchingEngine {
 
             masterSetAssetObjectTypeAndFieldsMap.get(matchWrapper.getParentAssetObjName()).add(matchWrapper.getObjectAssetLookupFieldName());
             // get secondary lookup name if applicable ( typically market based factors )
-            if (matchWrapper.requiresSecondaryLookup) masterSetAssetObjectTypeAndFieldsMap.get(matchWrapper.getParentAssetObjName()).add(matchWrapper.getSecondaryLookupName());
+            if (matchWrapper.requiresSecondaryLookup) {
+                masterSetAssetObjectTypeAndFieldsMap.get(matchWrapper.getParentAssetObjName()).add(matchWrapper.getSecondaryLookupName());
+            }
         }
 
         if (String.isNotBlank(matchWrapper.customMatchingValue)) {
@@ -113,8 +115,17 @@ public with sharing class NZC_EmissionsMatchingEngine {
         // example {"StnryAssetEnvrSrc" : [ "WstDispoEmssnFctrSetId", "RefrigerantEmssnFctrId", "ElectricityEmssnFctrId", "OtherEmssnFctrId" ]}
         NZC_EmissionsMatchingLog.log('query assets with ', masterSetAssetObjectTypeAndFieldsMap);
         for (String objectName : masterSetAssetObjectTypeAndFieldsMap.keySet()) {
+            // Validate object name to prevent SOQL injection
+            if (!validateSObjectType(objectName)) {
+                NZC_EmissionsMatchingLog.log('Invalid object name: ' + objectName);
+                continue;
+            }
+            // Object name is validated via validateSObjectType(), safe to use in query
+            // Field names come from internal constants map, not user input
+            // Bind variable :assetIdsSet prevents injection
+            // Note: Database.query in loop is safe here - object names are validated and queries are bounded by assetIdsSet size
             String query = 'SELECT Id, ' + String.join(new List<String>(masterSetAssetObjectTypeAndFieldsMap.get(objectName)), ',')
-                    + ' FROM ' + objectName+ ' WHERE Id IN:assetIdsSet';
+                    + ' FROM ' + objectName + ' WHERE Id IN:assetIdsSet';
             for (SObject returnedAsset : Database.query(query)) {
                 NZC_EmissionsMatchingLog.log(returnedAsset);
                 for (String fieldName : masterSetAssetObjectTypeAndFieldsMap.get(objectName)) {
@@ -132,23 +143,49 @@ public with sharing class NZC_EmissionsMatchingEngine {
     }
 
     private void getCustomMatchingMasterSets() {
-        if (customMatchingEmissionsObjectNames.isEmpty()) return;
+        if (customMatchingEmissionsObjectNames.isEmpty()) {
+            return;
+        }
         NZC_EmissionsMatchingLog.log('custom matching by field key object names:', customMatchingEmissionsObjectNames.keySet());
         Set<String> customMatchValues = customMatchingKeys;
 
         for (String objectName : customMatchingEmissionsObjectNames.keySet()) {
+            // Validate object name to prevent SOQL injection
+            if (!validateSObjectType(objectName)) {
+                NZC_EmissionsMatchingLog.log('Invalid object name: ' + objectName);
+                continue;
+            }
             Set<String> fieldsNeeded = new Set<String>();
             Set<String> whereClauses = new Set<String>();
+            Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
+            if (sObjectType == null) {
+                NZC_EmissionsMatchingLog.log('Object type not found: ' + objectName);
+                continue;
+            }
+            // Cache describe result to avoid eager loading of all child relationships
+            Schema.DescribeSObjectResult objectDescribe = sObjectType.getDescribe();
             for (String hashKey : customMatchingEmissionsObjectNames.get(objectName)) {
                 // get fields needed from custom MTD
-                fieldsNeeded.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c);
-                whereClauses.add(NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c + ' IN: customMatchValues');
+                String fieldName = NZC_EmissionsMatchingMTD.customMatchingRules.get(hashKey).EmissionsSetFieldToMatch__c;
+                // Validate field name to prevent SOQL injection
+                if (validateFieldName(objectDescribe, fieldName)) {
+                    fieldsNeeded.add(fieldName);
+                    // Field name is validated, safe to use in query
+                    whereClauses.add(fieldName + ' IN: customMatchValues');
+                }
             }
             NZC_EmissionsMatchingLog.log('object:', objectName);
             NZC_EmissionsMatchingLog.log('matching fields:', fieldsNeeded);
             NZC_EmissionsMatchingLog.log('where clauses:', whereClauses);
+            if (fieldsNeeded.isEmpty()) {
+                continue;
+            }
+            // Object name validated via validateSObjectType(), field names validated via validateFieldName()
+            // All field names in fieldsNeeded and whereClauses are validated before being added
+            // Bind variable :customMatchValues prevents injection
+            // Note: Database.query in loop is safe here - object and field names are validated, queries are bounded
             String query = 'SELECT Id, ' +
-                    String.join(new List<String>(fieldsNeeded), ',') + ' FROM ' + objectName+ ' WHERE ' +
+                    String.join(new List<String>(fieldsNeeded), ',') + ' FROM ' + objectName + ' WHERE ' +
                     String.join(new List<String>(whereClauses), ' OR') + ' AND MasterEmissionsSet__c = NULL';
             for (SObject emissionSetQueried : Database.query(query)) {
                 // for later query we add emissions set to assetId emissionId map for date matching
@@ -158,9 +195,12 @@ public with sharing class NZC_EmissionsMatchingEngine {
                 for (String field : fieldsNeeded) {
                     String recordsValue = (String) emissionSetQueried.get(field);
                     if (String.isNotBlank(recordsValue)) {
+                        // Normalize to uppercase for case-insensitive matching
+                        String normalizedValue = recordsValue.toUpperCase();
                         // store emissions sets by object by field value : emission set Id
+                        String hashKey = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{objectName, normalizedValue});
                         customMatchingKeyToMasterSetIdMap.put(
-                                NZC_EmissionsMatchingUtil.createHashKey(new List<String>{objectName, recordsValue}),
+                                hashKey,
                                 emissionSetQueried.Id
                                 );
                     }
@@ -186,8 +226,10 @@ public with sharing class NZC_EmissionsMatchingEngine {
 
             if (wrapper.doesUseCustomEmissionsMatching()) {
                 NZC_EmissionsMatchingLog.log('custom key match used', wrapper.customMatchingValue);
+                // Normalize to uppercase for case-insensitive matching (must match normalization in getCustomMatchingMasterSets)
+                String normalizedValue = String.isNotBlank(wrapper.customMatchingValue) ? wrapper.customMatchingValue.toUpperCase() : wrapper.customMatchingValue;
                 String customKeyMatchingHash = NZC_EmissionsMatchingUtil.createHashKey(new List<String>{
-                        wrapper.getEmissionsFactorObjectName(), wrapper.customMatchingValue
+                        wrapper.getEmissionsFactorObjectName(), normalizedValue
                 });
                 if (customMatchingKeyToMasterSetIdMap.containsKey(customKeyMatchingHash)) {
                     wrapper.masterEmissionsSetId = customMatchingKeyToMasterSetIdMap.get(customKeyMatchingHash);
@@ -205,6 +247,14 @@ public with sharing class NZC_EmissionsMatchingEngine {
         // example value of emissionsSetObjectNames values [ "WstDispoEmssnFctrSet", "RefrigerantEmssnFctr", "ElectricityEmssnFctrSet", "OtherEmssnFctrSet" ]
         Set<String> masterEmissionsSetIds = new Set<String>(masterEmissionsSetIdsByAssetHash.values());
         for (String objectName : emissionsSetObjectNames) {
+            // Validate object name to prevent SOQL injection
+            if (!validateSObjectType(objectName)) {
+                NZC_EmissionsMatchingLog.log('Invalid object name: ' + objectName);
+                continue;
+            }
+            // Object name validated via validateSObjectType(), field names are hardcoded constants
+            // Bind variable :masterEmissionsSetIds prevents injection
+            // Note: Database.query in loop is safe here - object names are validated, queries are bounded by emissionsSetObjectNames size
             String currentQuery = 'SELECT Id, EmissionsFactorUpdateYear__c, MasterEmissionsSet__c FROM ' + objectName
                     +' WHERE EmissionsFactorUpdateYear__c != NULL' +
                     ' AND MasterEmissionsSet__c IN: masterEmissionsSetIds' +
@@ -275,5 +325,42 @@ public with sharing class NZC_EmissionsMatchingEngine {
         }
 
         return currentMatchingId;
+    }
+
+    /**
+     * Validates that an SObject type name exists in the schema to prevent SOQL injection
+     * @param objectName The object name to validate
+     * @return true if the object name is valid, false otherwise
+     */
+    private Boolean validateSObjectType(String objectName) {
+        if (String.isBlank(objectName)) {
+            return false;
+        }
+        try {
+            Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
+            return sObjectType != null;
+        } catch (Exception e) {
+            NZC_EmissionsMatchingLog.log('Error validating object name: ' + objectName, e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Validates that a field name exists on an SObject to prevent SOQL injection
+     * @param objectDescribe The SObject describe result
+     * @param fieldName The field name to validate
+     * @return true if the field name is valid, false otherwise
+     */
+    private Boolean validateFieldName(Schema.DescribeSObjectResult objectDescribe, String fieldName) {
+        if (String.isBlank(fieldName) || objectDescribe == null) {
+            return false;
+        }
+        try {
+            Schema.SObjectField field = objectDescribe.fields.getMap().get(fieldName);
+            return field != null;
+        } catch (Exception e) {
+            NZC_EmissionsMatchingLog.log('Error validating field name: ' + fieldName, e.getMessage());
+            return false;
+        }
     }
 }

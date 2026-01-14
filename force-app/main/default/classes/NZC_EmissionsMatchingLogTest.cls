@@ -17,7 +17,7 @@ private class NZC_EmissionsMatchingLogTest {
     }
 
     @IsTest
-    static void testLogging_loggingDisabled() {
+    static void testLoggingLoggingDisabled() {
         NZC_EmissionsMatchingMTD.doLog = false;
 
         NZC_EmissionsMatchingLog.log('no log test');
