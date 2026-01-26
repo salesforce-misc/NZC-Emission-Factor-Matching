@@ -1,6 +1,7 @@
 # This file is used for Git repositories
 .localdevserver
 .sfdx
+.sf/
 .vscode/settings.json
 .DS_Store
 
