@@ -21,7 +21,6 @@
         "../../../../.sfdx/typings/lwc/**/*.d.ts"
     ],
     "typeAcquisition": {
-        "enable": true,
         "include": [
             "jest"
         ]

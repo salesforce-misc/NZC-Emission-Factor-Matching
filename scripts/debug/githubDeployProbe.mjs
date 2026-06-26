@@ -1,5 +1,10 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { readdir } from 'node:fs/promises';
+
+const execFileAsync = promisify(execFile);
 
 const runId = process.argv[2] || 'pre-fix';
 const deployUrl =
@@ -118,6 +123,115 @@ await sendLog(
     defaultPackagePath,
     defaultPathHasClasses,
     defaultPathHasMainDefault,
+  }
+);
+// #endregion
+
+let convertExitOk = false;
+let convertStdout = '';
+let convertStderr = '';
+try {
+  const { stdout, stderr } = await execFileAsync('sfdx', [
+    'force:source:convert',
+    '--outputdir',
+    '.tmp/probe-deploy',
+  ]);
+  convertExitOk = true;
+  convertStdout = stdout || '';
+  convertStderr = stderr || '';
+} catch (error) {
+  convertStdout = error?.stdout || '';
+  convertStderr = error?.stderr || String(error);
+}
+
+const probeDeployExists = existsSync('.tmp/probe-deploy');
+const probePackageXmlExists = existsSync('.tmp/probe-deploy/package.xml');
+const probeClassesDirExists = existsSync('.tmp/probe-deploy/classes');
+const probeTriggersDirExists = existsSync('.tmp/probe-deploy/triggers');
+const probeObjectsDirExists = existsSync('.tmp/probe-deploy/objects');
+let probeRootEntryCount = 0;
+if (probeDeployExists) {
+  try {
+    probeRootEntryCount = (await readdir('.tmp/probe-deploy')).length;
+  } catch {}
+}
+
+// #region agent log H7
+await sendLog('scripts/debug/githubDeployProbe.mjs:153', 'H7', 'Local SFDX conversion result probe', {
+  convertExitOk,
+  probeDeployExists,
+  probePackageXmlExists,
+  probeClassesDirExists,
+  probeTriggersDirExists,
+  probeObjectsDirExists,
+  probeRootEntryCount,
+});
+// #endregion
+
+let explicitRootConvertExitOk = false;
+const explicitRootOutputDir = '.tmp/probe-deploy-explicit-root';
+try {
+  await execFileAsync('sf', [
+    'project',
+    'convert',
+    'source',
+    '--root-dir',
+    'force-app/main/default',
+    '--output-dir',
+    explicitRootOutputDir,
+  ]);
+  explicitRootConvertExitOk = true;
+} catch {}
+
+const explicitRootPackageXmlExists = existsSync(`${explicitRootOutputDir}/package.xml`);
+const explicitRootClassesDirExists = existsSync(`${explicitRootOutputDir}/classes`);
+const explicitRootTriggersDirExists = existsSync(`${explicitRootOutputDir}/triggers`);
+const explicitRootObjectsDirExists = existsSync(`${explicitRootOutputDir}/objects`);
+
+// #region agent log H10
+await sendLog(
+  'scripts/debug/githubDeployProbe.mjs:182',
+  'H10',
+  'Explicit root-dir conversion comparison (sf project convert source)',
+  {
+    explicitRootConvertExitOk,
+    explicitRootPackageXmlExists,
+    explicitRootClassesDirExists,
+    explicitRootTriggersDirExists,
+    explicitRootObjectsDirExists,
+  }
+);
+// #endregion
+
+// #region agent log H8
+await sendLog(
+  'scripts/debug/githubDeployProbe.mjs:200',
+  'H8',
+  'SFDX conversion stdout/stderr signatures',
+  {
+    stdoutHasSuccessKeyword:
+      convertStdout.includes('successfully converted') || convertStdout.includes('Source was successfully converted'),
+    stdoutHasWarningKeyword: convertStdout.toLowerCase().includes('warning'),
+    stderrHasContent: convertStderr.trim().length > 0,
+    stderrSnippet: convertStderr.slice(0, 300),
+  }
+);
+// #endregion
+
+// #region agent log H9
+await sendLog(
+  'scripts/debug/githubDeployProbe.mjs:215',
+  'H9',
+  'Inference: if explicit root conversion works but default conversion fails, converter defaults are the issue',
+  {
+    localDefaultConversionProducedMetadata:
+      convertExitOk &&
+      (probeClassesDirExists || probeObjectsDirExists || probeTriggersDirExists) &&
+      probeRootEntryCount > 1,
+    explicitRootConversionProducedMetadata:
+      explicitRootConvertExitOk &&
+      (explicitRootClassesDirExists || explicitRootObjectsDirExists || explicitRootTriggersDirExists),
+    defaultPackagePath,
   }
 );
 // #endregion

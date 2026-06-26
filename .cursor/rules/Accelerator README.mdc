@@ -231,7 +231,7 @@ Click the **"Deploy to Salesforce"** button above for instant deployment to your
 For environments where GitHub access is restricted:
 
 1. **Download** the pre-built deployment package:
-   - Direct download: [{{PROJECT_NAME}}-Deploy.zip](./{{PROJECT_NAME}}-Deploy.zip)
+   - Direct download: [{{PROJECT_NAME}}-Deploy.zip](https://github.com/{{GITHUB_USERNAME}}/{{REPO_NAME}}/releases/latest/download/{{PROJECT_NAME}}-Deploy.zip)
    - Or download from the [GitHub Releases](https://github.com/{{GITHUB_USERNAME}}/{{REPO_NAME}}/releases) tab
 2. **Navigate** to [Salesforce Workbench](https://workbench.developerforce.com/login.php)
 3. **Login** to your target org
@@ -289,6 +289,17 @@ cci flow run dev_org --org dev
 - Provide clear step-by-step instructions
 - Include alternative tools where applicable
 - Mention CI/CD compatibility
+- Option 2 MUST reference a published GitHub Release asset (`{{PROJECT_NAME}}-Deploy.zip`) and not a local repo file path
+- Ensure release asset naming is deterministic and consistent across README and Releases
+
+##### Option 2 Release Publishing (Required)
+
+Before publishing or merging README updates that mention Option 2, you must publish the deployment zip:
+
+1. Build a Workbench-compatible deployment zip named `{{PROJECT_NAME}}-Deploy.zip`
+2. Upload it as an asset to a GitHub Release in `{{GITHUB_USERNAME}}/{{REPO_NAME}}`
+3. Verify the README direct-download link resolves successfully
+4. Verify the Releases tab includes the same asset name referenced in README
 
 ---
 
@@ -705,6 +716,7 @@ When using this template, replace the following placeholders:
 5. ✅ Clear project title and purpose
 6. ✅ Technical architecture overview
 7. ✅ Post-installation steps
+8. ✅ Published GitHub Release zip asset for Option 2 (`{{PROJECT_NAME}}-Deploy.zip`)
 
 **Tone Requirements:**
 - Accessible to both Admins and Developers
@@ -723,6 +735,8 @@ Before finalizing your README, verify:
 - [ ] OSPO disclaimer present and correct
 - [ ] License section references LICENSE.md
 - [ ] All links work and point to correct locations
+- [ ] Option 2 direct-download link points to a real GitHub Release asset
+- [ ] GitHub Releases includes `{{PROJECT_NAME}}-Deploy.zip` with exact matching filename
 - [ ] Code blocks have proper language tags
 - [ ] Emojis are consistent and appropriate
 - [ ] Horizontal rules separate major sections
