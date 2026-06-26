@@ -10,7 +10,7 @@
 
 <div align="center">
 
-[![Deploy to Salesforce](https://img.shields.io/badge/Deploy%20to%20Salesforce-00A1E0?style=for-the-badge&logo=salesforce&logoColor=white)](https://githubsfdeploy.herokuapp.com?owner=jvillalpando_sfemu&repo=NZC-Emission-Factor-Matching&ref=main)
+[![Deploy to Salesforce](https://img.shields.io/badge/Deploy%20to%20Salesforce-00A1E0?style=for-the-badge&logo=salesforce&logoColor=white)](https://githubsfdeploy.herokuapp.com?owner=salesforce-misc&repo=NZC-Emission-Factor-Matching&ref=main)
 
 **One-click deployment to your Salesforce org**
 
@@ -74,8 +74,8 @@ Click the **"Deploy to Salesforce"** button above for instant deployment to your
 For environments where GitHub access is restricted:
 
 1. **Download** the pre-built deployment package:
-   - Direct download: Navigate to the [GitHub Releases](https://github.com/jvillalpando_sfemu/NZC-Emission-Factor-Matching/releases) tab
-   - Download the latest release `.zip` file
+   - Direct download: Navigate to the [GitHub Releases](https://github.com/salesforce-misc/NZC-Emission-Factor-Matching/releases) tab
+   - Download the latest deployment asset (for example, `NZC-Emission-Factor-Matching-Deploy.zip`)
 2. **Navigate** to [Salesforce Workbench](https://workbench.developerforce.com/login.php)
 3. **Login** to your target org
 4. **Go to** Migration → Deploy
@@ -90,7 +90,7 @@ For developers who prefer command-line tools:
 ##### 3.1 Clone the Repository
 
 ```bash
-git clone https://github.com/jvillalpando_sfemu/NZC-Emission-Factor-Matching.git
+git clone https://github.com/salesforce-misc/NZC-Emission-Factor-Matching.git
 cd NZC-Emission-Factor-Matching
 ```
 
@@ -262,13 +262,13 @@ We welcome contributions to improve the EmissionsMatching accelerator! Please fo
 
 ## 📄 License
 
-This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** - see the [LICENSE.md](LICENSE.md) file for details.
 
 ---
 
 ## 🐛 How to Report Bugs
 
-Found a bug or have a feature request? Please report it via [GitHub Issues](https://github.com/jvillalpando_sfemu/NZC-Emission-Factor-Matching/issues).
+Found a bug or have a feature request? Please report it via [GitHub Issues](https://github.com/salesforce-misc/NZC-Emission-Factor-Matching/issues).
 
 When reporting bugs, please include:
 
@@ -285,8 +285,8 @@ When reporting bugs, please include:
 
 - 📚 **Documentation**: Check our [User Guide](docs/USER_GUIDE.md) for detailed configuration and usage instructions
 - 📖 **Technical Reference**: See [Repository Summary](REPOSITORY_SUMMARY.md) for technical architecture details
-- 🐛 **Issues**: Report bugs via [GitHub Issues](https://github.com/jvillalpando_sfemu/NZC-Emission-Factor-Matching/issues)
-- 💬 **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/jvillalpando_sfemu/NZC-Emission-Factor-Matching/discussions)
+- 🐛 **Issues**: Report bugs via [GitHub Issues](https://github.com/salesforce-misc/NZC-Emission-Factor-Matching/issues)
+- 💬 **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/salesforce-misc/NZC-Emission-Factor-Matching/discussions)
 - 📧 **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
 
 ---
