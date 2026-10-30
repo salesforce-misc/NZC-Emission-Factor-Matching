@@ -1,0 +1,135 @@
+<!--
+  Copyright (c) 2025, Salesforce, Inc.
+  All rights reserved.
+  SPDX-License-Identifier: Apache-2.0
+  For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/Apache-2.0
+-->
+<template>
+    <lightning-card title="Emissions Matching Rule Wizard" icon-name="standard:rules">
+        <div class="slds-var-p-horizontal_medium">
+            <lightning-progress-indicator current-step={currentStep} type="base" has-error={hasError}>
+                <lightning-progress-step label="Record type" value="1"></lightning-progress-step>
+                <lightning-progress-step label="Match fields" value="2"></lightning-progress-step>
+                <lightning-progress-step label="Review" value="3"></lightning-progress-step>
+                <lightning-progress-step label="Save" value="4"></lightning-progress-step>
+            </lightning-progress-indicator>
+
+            <div class="slds-var-m-top_medium">
+                <template lwc:if={isLoading}>
+                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                </template>
+
+                <template lwc:if={isStepOne}>
+                    <p class="slds-var-m-bottom_small">
+                        Choose the record type whose emissions factor should be matched automatically.
+                    </p>
+                    <lightning-combobox name="objectName" label="Record type" value={objectName}
+                        options={objectOptions} onchange={handleObjectChange} required></lightning-combobox>
+                    <template lwc:if={showFuelType}>
+                        <lightning-combobox name="fuelType" label="Fuel type (optional)" value={fuelType}
+                            options={fuelTypeOptions} onchange={handleFuelChange}></lightning-combobox>
+                    </template>
+                    <template lwc:if={hasExistingRules}>
+                        <div class="slds-var-m-top_medium">
+                            <p class="slds-text-title_caps slds-var-m-bottom_x-small">Existing rules</p>
+                            <ul class="slds-list_dotted">
+                                <template for:each={existingRules} for:item="rule">
+                                    <li key={rule.developerName}>{rule.summary}</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </template>
+                </template>
+
+                <template lwc:if={isStepTwo}>
+                    <p class="slds-var-m-bottom_small">
+                        Pair each field on the record with the field on the emissions factor
+                        ({setObjectName}) that it must equal. All pairs must match together.
+                    </p>
+                    <template for:each={pairs} for:item="pair">
+                        <div key={pair.id} class="slds-grid slds-gutters pair-row slds-var-m-bottom_small">
+                            <div class="slds-col">
+                                <lightning-combobox label="Record field" data-id={pair.id} data-side="record"
+                                    value={pair.recordField} options={recordFieldOptions}
+                                    onchange={handlePairChange} required></lightning-combobox>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-combobox label="Emissions factor field" data-id={pair.id} data-side="set"
+                                    value={pair.setField} options={setFieldOptions}
+                                    onchange={handlePairChange} required></lightning-combobox>
+                            </div>
+                            <template lwc:if={canRemovePair}>
+                                <div class="slds-col slds-grow-none">
+                                    <lightning-button-icon icon-name="utility:delete" alternative-text="Remove pair"
+                                        data-id={pair.id} onclick={handleRemovePair}></lightning-button-icon>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template lwc:if={allowMultiple}>
+                        <lightning-button label="Add another field pair" icon-name="utility:add"
+                            onclick={handleAddPair}></lightning-button>
+                    </template>
+                </template>
+
+                <template lwc:if={isStepThree}>
+                    <p class="slds-text-title_caps slds-var-m-bottom_x-small">Rule summary</p>
+                    <p class="slds-var-m-bottom_small">{ruleSummary}</p>
+                    <template lwc:if={validation}>
+                        <template for:each={validation.errors} for:item="message">
+                            <div key={message} class="slds-text-color_error">{message}</div>
+                        </template>
+                        <template for:each={validation.warnings} for:item="message">
+                            <div key={message} class="slds-text-color_weak">&#9888; {message}</div>
+                        </template>
+                        <template lwc:if={showAffected}>
+                            <p class="slds-var-m-top_small">
+                                {validation.affectedRecords} record(s) currently have no emissions factor and
+                                will be matched on their next save or backfill run.
+                            </p>
+                        </template>
+                    </template>
+                </template>
+
+                <template lwc:if={isStepFour}>
+                    <template lwc:if={isDeployed}>
+                        <p class="slds-text-color_success slds-var-m-bottom_small">The rule was saved.</p>
+                        <template lwc:if={showBackfill}>
+                            <lightning-button variant="brand" label="Backfill procurement items now"
+                                onclick={handleBackfill} disabled={backfillStarted}></lightning-button>
+                            <template lwc:if={backfillStarted}>
+                                <p class="slds-var-m-top_small">Backfill started: {backfillStatus}</p>
+                            </template>
+                        </template>
+                    </template>
+                    <template lwc:elseif={isTimedOut}>
+                        <p class="slds-text-color_weak">
+                            The deployment is still running. Check Setup &gt; Deployment Status, then reopen the wizard.
+                        </p>
+                    </template>
+                    <template lwc:else>
+                        <p>Saving the rule&hellip;</p>
+                    </template>
+                </template>
+            </div>
+        </div>
+
+        <div slot="footer">
+            <template lwc:if={showBack}>
+                <lightning-button label="Back" onclick={handleBack}></lightning-button>
+            </template>
+            <template lwc:if={showNext}>
+                <lightning-button variant="brand" label="Next" class="slds-var-m-left_x-small"
+                    onclick={handleNext} disabled={isNextDisabled}></lightning-button>
+            </template>
+            <template lwc:if={showSave}>
+                <lightning-button variant="brand" label="Save rule" class="slds-var-m-left_x-small"
+                    onclick={handleSave} disabled={isSaveDisabled}></lightning-button>
+            </template>
+            <template lwc:if={isStepFour}>
+                <lightning-button label="Create another rule" class="slds-var-m-left_x-small"
+                    onclick={handleRestart}></lightning-button>
+            </template>
+        </div>
+    </lightning-card>
+</template>

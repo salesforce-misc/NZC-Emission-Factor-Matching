@@ -8,7 +8,7 @@
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>What field on the emissions set should we match to?</inlineHelpText>
         <label>EmissionsSetFieldToMatch</label>
-        <length>75</length>
+        <length>255</length>
         <required>true</required>
         <type>Text</type>
         <unique>false</unique>
@@ -20,7 +20,7 @@
         <fieldManageability>DeveloperControlled</fieldManageability>
         <inlineHelpText>the name of the energy use field that should be matched</inlineHelpText>
         <label>EnergyUseFieldToMatch</label>
-        <length>75</length>
+        <length>255</length>
         <required>true</required>
         <type>Text</type>
         <unique>false</unique>

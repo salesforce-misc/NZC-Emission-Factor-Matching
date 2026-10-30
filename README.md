@@ -190,6 +190,21 @@ After deploying with any method above, complete these manual steps:
 4. **Ensure** both Energy Use and Emissions Set records have matching values in the specified fields
 5. **Test** with a sample record to verify matching works
 
+### 🧭 **Creating Rules with the Wizard**
+
+Add the **nzc_EmissionsMatchingRuleWizard** component to an App, Home or Tab page. The wizard guides you through
+choosing the record type, pairing record fields with emissions factor fields, reviewing warnings (for example
+Allow Custom Tag Matching being off) and saving the rule. It deploys the Custom Match metadata record for you, so no
+manual metadata editing is needed. Users need the `EmissionsMatching` permission set and permission to deploy metadata.
+
+### 🛒 **Scope 3 Procurement Backfill**
+
+Procurement items (`Scope3PcmtItem`) loaded without an emissions factor are linked to a `PcmtEmssnFctrSetItem` using a
+Custom Match rule for `Scope3PcmtItem`. List several fields, comma separated and in the same order on both sides
+(for example `SupplierId,Scope3GhgCategory` on the item -> `Supplier__c,Scope3GhgCategory` on the factor); all must match. If several factors
+share the key, the one with the latest update year not after the item's spend date year wins. Matching runs in the
+`NZC_EmissionsMatchingProcurementTrigger` and in the procurement backfill batch (also reachable from the wizard's last step).
+
 ---
 
 ## 🏗️ Technical Architecture

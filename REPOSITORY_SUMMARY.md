@@ -2,6 +2,10 @@
 
 **EmissionsMatching** (NZC Emissions Factor Matching) is a Salesforce DX-based application for automatically matching emissions factors to energy use records based on active date ranges. The system provides intelligent date-based matching, custom field matching, advanced matching capabilities, and batch processing for large-scale emissions factor assignment across multiple energy use object types (Stationary, Vehicle, Waste, Hotel).
 
+> **Update (Scope 3 procurement and rule wizard).** Newer than the rest of this file, which still lists classes removed earlier (advanced match, matrix, T&D, accelerators); see `wiki/` for current notes.
+> - `NZC_EmissionsMatchingProcurementEngine`, `NZC_EmissionsMatchingProcurementBatch`, `NZC_EmissionsMatchingProcurementTrigger`: backfill `Scope3PcmtItem.PcmtEmssnFctrSetItemId` from `PcmtEmssnFctrSetItem` using a multi-field Custom Match rule. The batch runs last in the `NZC_EmissionsMatchingBatch` chain, which now also covers freight, air, ground and rental car.
+> - `NZC_EmissionsMatchingRuleController`, `NZC_EmissionsMatchingRuleDeployCallback` and the `nzc_EmissionsMatchingRuleWizard` LWC: guided creation of Custom Match rules through the Metadata API.
+
 ## Overview
 
 This Salesforce managed package provides:

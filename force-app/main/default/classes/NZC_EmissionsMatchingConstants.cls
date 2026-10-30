@@ -20,6 +20,18 @@ public with sharing class NZC_EmissionsMatchingConstants {
     public static final String OBJECT_GROUND_TRAVEL_USE = 'GroundTravelEnrgyUse';
     public static final String OBJECT_RENTAL_CAR_USE = 'RentalCarEnrgyUse';
 
+    // Scope 3 procurement: items are matched to an emissions set ITEM (not a master/child set)
+    public static final String OBJECT_PROCUREMENT_ITEM = 'Scope3PcmtItem';
+    public static final String OBJECT_PROCUREMENT_SET_ITEM = 'PcmtEmssnFctrSetItem';
+    public static final String FIELD_PROCUREMENT_SET_ITEM_LOOKUP = 'PcmtEmssnFctrSetItemId';
+    public static final String FIELD_PROCUREMENT_SET_LOOKUP = 'PcmtEmssnFctrSetId';
+    public static final String FIELD_PROCUREMENT_SET_YEAR = 'PcmtEmssnFctrSet.EmissionFactorUpdateYear';
+    public static final String FIELD_PROCUREMENT_SPENT_DATE = 'SpentDate';
+    public static final String FIELD_PROCUREMENT_REPORT_DATE = 'ReportDate';
+    public static final String PROCUREMENT_MATCH_BATCH_NAME = 'NZC_EmissionsMatchingProcurementBatch';
+    public static final String MATCH_FIELD_DELIMITER = ',';
+    public static final String MATCH_KEY_DELIMITER = '|';
+
     public static final String OBJECT_OTHER_EMISSION_SET = 'OtherEmssnFctrSet';
     public static final String OBJECT_ELECTRICITY_SET = 'ElectricityEmssnFctrSet';
     public static final String OBJECT_REFRIGERANT_SET = 'RefrigerantEmssnFctr';

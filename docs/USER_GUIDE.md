@@ -223,6 +223,23 @@ This example matches Hotel Energy Use records to Hotel Emissions Sets based on c
 5. Ensure `Allow Custom Tag Matching` is enabled in the custom setting
 6. Test the configuration by creating or updating an energy use record with matching field values
 
+### Creating Rules with the Rule Wizard
+
+Instead of creating the metadata record by hand, add the `nzc_EmissionsMatchingRuleWizard` component to a Lightning page
+and follow the four steps: **Record type**, **Match fields**, **Review** and **Save**. The review step warns when
+Allow Custom Tag Matching or the insert/update toggles are off and, for procurement, shows how many items have no factor yet.
+Saving deploys the rule asynchronously; the wizard confirms once the record can be read back. Saving a rule for an object and
+fuel type that already has one replaces it.
+
+### Multi-Field Rules and Scope 3 Procurement
+
+For `Scope3PcmtItem` (the only object that supports it), **Energy Use Field To Match** and **Emissions Set Field To Match**
+accept ordered, comma-separated field lists of the same length (up to 255 characters), for example
+`SupplierId,Scope3GhgCategory` (item) paired with `Supplier__c,Scope3GhgCategory` (factor). Supplier is a lookup to the standard Supplier object and is compared by Id. The emissions set side refers to `PcmtEmssnFctrSetItem`. Every pair must match
+(case-insensitive); an item with a blank value in any listed field is skipped. When several factors share the key, the
+factor whose set `EmissionFactorUpdateYear` is the latest on or before the item's spend (or report) year is used.
+The matched factor is written to `PcmtEmssnFctrSetItemId`; items that already have one are never changed.
+
 ### Important Notes
 
 #### Case-Insensitive Matching

@@ -7,6 +7,19 @@
 
 
 public with sharing class NZC_EmissionsMatchingBatch implements Database.Batchable<SObject>, Database.Stateful {
+    // objects are processed sequentially in this order
+    @TestVisible
+    private static final List<String> BATCH_ORDER = new List<String>{
+            NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_VEHICLE_ENERGY_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_FREIGHT_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_AIR_TRAVEL_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_GROUND_TRAVEL_USE,
+            NZC_EmissionsMatchingConstants.OBJECT_RENTAL_CAR_USE
+    };
+
     private final String objectName;
 
     public NZC_EmissionsMatchingBatch() {
@@ -29,17 +42,12 @@ public with sharing class NZC_EmissionsMatchingBatch implements Database.Batchab
     }
 
     public void finish(Database.BatchableContext batchContext){
-        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_STATIONARY_ENERGY_USE) {
-            // start vehicle next
-            Database.executeBatch(new NZC_EmissionsMatchingBatch(NZC_EmissionsMatchingConstants.OBJECT_VEHICLE_ENERGY_USE));
-        }
-        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_VEHICLE_ENERGY_USE) {
-            // start waste next
-            Database.executeBatch(new NZC_EmissionsMatchingBatch(NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE));
-        }
-        if (objectName == NZC_EmissionsMatchingConstants.OBJECT_WASTE_USE) {
-            // start hotel next
-            Database.executeBatch(new NZC_EmissionsMatchingBatch(NZC_EmissionsMatchingConstants.OBJECT_HOTEL_USE));
+        Integer currentIndex = BATCH_ORDER.indexOf(objectName);
+        if (currentIndex >= 0 && currentIndex < BATCH_ORDER.size() - 1) {
+            Database.executeBatch(new NZC_EmissionsMatchingBatch(BATCH_ORDER[currentIndex + 1]));
+        } else if (currentIndex == BATCH_ORDER.size() - 1 && !Test.isRunningTest()) {
+            // procurement items are matched last
+            Database.executeBatch(new NZC_EmissionsMatchingProcurementBatch(), NZC_EmissionsMatchingMTD.emissionsMatchBatchSize);
         }
     }
 }
