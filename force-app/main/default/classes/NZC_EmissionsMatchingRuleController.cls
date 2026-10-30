@@ -171,6 +171,10 @@ public with sharing class NZC_EmissionsMatchingRuleController {
 
         Metadata.DeployContainer container = new Metadata.DeployContainer();
         container.addMetadata(record);
+        // Metadata deployments cannot be enqueued from a test context
+        if (Test.isRunningTest()) {
+            return 'testDeployId';
+        }
         return Metadata.Operations.enqueueDeployment(container, new NZC_EmissionsMatchingRuleDeployCallback());
     }
 

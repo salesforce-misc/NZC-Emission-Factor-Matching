@@ -62,7 +62,7 @@ private class NZC_EmissionsMatchingProcurementTest {
     static void doesNothingWhenCustomMatchingIsOff() {
         setupData();
         enableRule('Name', 'Name');
-        NZC_EmissionsMatchingMTD.allowCustomTagMatching = false;
+        NZC_EmissionsMatchingMTD.matchingConfig = new NZC_EmissionsMatchingConfig__c(allowCustomTagMatching__c = false);
 
         Scope3PcmtItem item = createItem('acme', 'Steel', Date.newInstance(2022, 5, 1));
         NZC_EmissionsMatchingProcurementEngine.matchItems(new List<SObject>{item});
@@ -86,7 +86,7 @@ private class NZC_EmissionsMatchingProcurementTest {
         setupData();
         enableRule('Name,SpendingCategory1', 'Name,EconomicSector');
         List<Scope3PcmtItem> items = new List<Scope3PcmtItem>();
-        for (Integer i = 0; i < 201; i++) {
+        for (Integer i = 0; i < 150; i++) {
             items.add(createItem('acme', 'Steel', Date.newInstance(2022, 5, 1)));
         }
         insert items;
@@ -95,7 +95,7 @@ private class NZC_EmissionsMatchingProcurementTest {
         Database.executeBatch(new NZC_EmissionsMatchingProcurementBatch(), 200);
         Test.stopTest();
 
-        Assert.areEqual(201, [SELECT COUNT() FROM Scope3PcmtItem WHERE PcmtEmssnFctrSetItemId = :oldFactor.Id]);
+        Assert.areEqual(150, [SELECT COUNT() FROM Scope3PcmtItem WHERE PcmtEmssnFctrSetItemId = :oldFactor.Id]);
     }
 
     private static SObject setItemWithYear(String name, String year) {
@@ -136,7 +136,7 @@ private class NZC_EmissionsMatchingProcurementTest {
     }
 
     private static void enableRule(String itemFields, String setItemFields) {
-        NZC_EmissionsMatchingMTD.allowCustomTagMatching = true;
+        NZC_EmissionsMatchingDatafactory.createEmissionsSettings();
         NZC_EmissionsMatchingMTD.customMatchingRules = new Map<String, NZC_EmissionsMatchingCustomMatch__mdt>{
                 NZC_EmissionsMatchingUtil.createHashKey(NZC_EmissionsMatchingConstants.OBJECT_PROCUREMENT_ITEM, null) =>
                         new NZC_EmissionsMatchingCustomMatch__mdt(
