@@ -17,3 +17,6 @@ Bootstrapped from the workspace template while adding Scope 3 procurement backfi
 
 ## [2026-10-30] ingest | Issue 1 fix: deploy zip builder
 - Added scripts/build-deploy-zip.py; regenerated stale package.xml. Not yet deployed to an org.
+
+## [2026-11-04] ingest | Issue 1 root cause
+- Workbench failure = Single Package unchecked; fixed README. Layout referenced two deleted fields; removed. Generator now emits CustomField/ListView.

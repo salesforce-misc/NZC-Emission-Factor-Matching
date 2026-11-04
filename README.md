@@ -79,7 +79,7 @@ For environments where GitHub access is restricted:
 2. **Navigate** to [Salesforce Workbench](https://workbench.developerforce.com/login.php)
 3. **Login** to your target org
 4. **Go to** Migration → Deploy
-5. **Upload** the zip file and deploy
+5. **Upload** the zip file, tick **Single Package** (required: without it Workbench looks for a `package.xml` inside every folder and fails with `classes/package.xml`-style errors), and deploy
 
 **Alternative Tools:** You can also deploy using [Salesforce Inspector](https://chrome.google.com/webstore/detail/salesforce-inspector/aodjmnfhjibkcdimpodiifdjnnncaafh) or the [Ant Migration Tool](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/forcemigrationtool_install.htm).
 

@@ -6,6 +6,7 @@ non-metadata files (jsconfig.json, .gitkeep, tests) are left out.
 Usage: python3 scripts/build-deploy-zip.py [out.zip]
 """
 import sys
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 
@@ -19,6 +20,12 @@ TYPES = {
     "layouts": ("Layout", ".layout"),
     "permissionsets": ("PermissionSet", ".permissionset"),
     "lwc": ("LightningComponentBundle", None),  # one member per bundle folder
+}
+# child elements of a .object file that must also be declared in package.xml as Object.Name
+OBJECT_CHILDREN = {
+    "fields": "CustomField", "listViews": "ListView", "validationRules": "ValidationRule",
+    "recordTypes": "RecordType", "webLinks": "WebLink", "compactLayouts": "CompactLayout",
+    "fieldSets": "FieldSet", "businessProcesses": "BusinessProcess", "sharingReasons": "SharingReason",
 }
 SKIP = {"jsconfig.json", ".eslintrc.json", ".gitkeep", ".DS_Store"}
 
@@ -34,12 +41,24 @@ def members(folder: str, suffix):
     return sorted(f.name[: -len(suffix)] for f in d.glob("*" + suffix))
 
 
+def object_children() -> dict:
+    found = {}
+    for f in sorted((SRC / "objects").glob("*.object")):
+        for el in ET.parse(f).getroot():
+            kind = OBJECT_CHILDREN.get(el.tag.rpartition("}")[2])
+            name = el.find("{*}fullName")
+            if kind and name is not None:
+                found.setdefault(kind, []).append(f"{f.stem}.{name.text}")
+    return found
+
+
 def package_xml() -> str:
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<Package xmlns="http://soap.sforce.com/2006/04/metadata">',
            "    <fullName>EmissionFactorMatching</fullName>"]
-    for folder, (name, suffix) in TYPES.items():
-        ms = members(folder, suffix)
+    groups = [(name, members(folder, suffix)) for folder, (name, suffix) in TYPES.items()]
+    groups += sorted((k, sorted(v)) for k, v in object_children().items())
+    for name, ms in groups:
         if not ms:
             continue
         out.append("    <types>")

@@ -17,12 +17,10 @@ Reporter: One-Click Deploy says classes etc. "named in package.xml, but not foun
 - `main` has no `sfdx-project.json`; the README button targets branch `deploy-mdapi`, which does. Its `force-app/main/default/package.xml` is mdapi-format (version 55.0, 105 members) beside source-folder content.
 - `deploy-mdapi` flipped `sfdx-project.json` path between `force-app` and `force-app/main/default` (commits 552eadc, 0455838), a sign the deploy tool was guessing which root to zip. The error is consistent with it zipping a root that lacks the package.xml's folders.
 - The release zip (`NZC-Emission-Factor-Matching-Deploy.zip`, v1.0.0, 147 entries) has a root `package.xml`, but also stray non-metadata `lwc/jsconfig.json` and `aura/.gitkeep`. The reporter's zip had 146 files and per-folder `package.xml` failures, so it was not this asset as committed: likely a re-zip from the wrong level.
-- Not reproduced: no org or Workbench run, and the live release asset was not downloaded.
+- Workbench failure reproduced with the sf CLI; see root cause below.
 
-## Fix applied (uncommitted, 2026-10-30)
-- `scripts/build-deploy-zip.py` builds the release zip: `package.xml` generated from the folders (API 65.0), root-level, no `jsconfig.json`/`.gitkeep`/tests. Same function regenerated `force-app/main/default/package.xml`, which was stale (no RuleWizard bundle).
-- Still to do: build and attach the new zip to the release, copy to `deploy-mdapi`, test in an org.
-
-## Next steps
-- Ask the reporter how they built the zip; have them use the release asset unchanged.
-- Drop `jsconfig.json` and `.gitkeep` from the release zip; check the deploy tool's root-selection rules.
+## Root cause and fix (2026-11-04)
+- **Workbench:** the **Single Package** box must be ticked. Unticked, the Metadata API treats each top-level folder as a package and wants `<folder>/package.xml`, which is exactly the reported `aura|classes|...|triggers/package.xml` failures. Reproduced with `sf project deploy start --metadata-dir <zip>` (fails) vs `--single-package` (check-only passes 125/125 on a Net Zero Cloud org). README Option 2 now says so.
+- **Real content bug found:** the Config layout referenced `AllowAdvancedMatching__c` and `AllowTransmissionDistribution__c`, which no longer exist on the object, so a fresh org rejects the layout. Items removed.
+- **Generated package.xml:** `scripts/build-deploy-zip.py` builds it from the folders (API 65.0) incl. `CustomField`/`ListView` children read from each `.object`. Zip has no `jsconfig.json`/`.gitkeep`/tests.
+- **One-Click:** root-selection theory still unproven; not testable without the Heroku tool.

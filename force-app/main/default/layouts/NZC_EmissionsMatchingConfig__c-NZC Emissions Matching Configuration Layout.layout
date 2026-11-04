@@ -40,14 +40,6 @@
                 <behavior>Edit</behavior>
                 <field>AllowCustomTagMatching__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>AllowAdvancedMatching__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>AllowTransmissionDistribution__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
