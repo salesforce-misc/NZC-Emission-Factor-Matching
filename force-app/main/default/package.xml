@@ -26,9 +26,15 @@
         <members>NZC_EmissionsMatchingLogTest</members>
         <members>NZC_EmissionsMatchingMTD</members>
         <members>NZC_EmissionsMatchingMTDTest</members>
+        <members>NZC_EmissionsMatchingProcurementBatch</members>
+        <members>NZC_EmissionsMatchingProcurementEngine</members>
+        <members>NZC_EmissionsMatchingProcurementTest</members>
         <members>NZC_EmissionsMatchingRentalCarWrapper</members>
         <members>NZC_EmissionsMatchingRntlCarTggrTest</members>
         <members>NZC_EmissionsMatchingRntlCarWrapperTest</members>
+        <members>NZC_EmissionsMatchingRuleController</members>
+        <members>NZC_EmissionsMatchingRuleControllerTest</members>
+        <members>NZC_EmissionsMatchingRuleDeployCallback</members>
         <members>NZC_EmissionsMatchingStationaryTggrTest</members>
         <members>NZC_EmissionsMatchingStationaryWpprTest</members>
         <members>NZC_EmissionsMatchingStationaryWrapper</members>
@@ -53,6 +59,7 @@
         <members>NZC_EmissionsMatchingFreightTrigger</members>
         <members>NZC_EmissionsMatchingGroundTravelTrigger</members>
         <members>NZC_EmissionsMatchingHotelTrigger</members>
+        <members>NZC_EmissionsMatchingProcurementTrigger</members>
         <members>NZC_EmissionsMatchingRentalCarTrigger</members>
         <members>NZC_EmissionsMatchingStationaryTrigger</members>
         <members>NZC_EmissionsMatchingVehicleTrigger</members>
@@ -92,7 +99,12 @@
         <name>PermissionSet</name>
     </types>
     <types>
+        <members>NZC_EmissionsMatchingRuleWizard</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
         <members>nzc_EmissionsMatchingBatchStart</members>
+        <members>nzc_EmissionsMatchingRuleWizard</members>
         <members>nzc_EmissionsRecalcBatchStart</members>
         <name>LightningComponentBundle</name>
     </types>

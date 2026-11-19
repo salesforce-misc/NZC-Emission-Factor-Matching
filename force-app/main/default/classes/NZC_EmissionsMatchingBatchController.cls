@@ -49,6 +49,21 @@ public with sharing class NZC_EmissionsMatchingBatchController {
     }
 
     @AuraEnabled
+    public static currentBatchStatus clientAttemptProcurementBatchStart() {
+        currentBatchStatus batchStatus = canStartBatch(NZC_EmissionsMatchingConstants.PROCUREMENT_MATCH_BATCH_NAME);
+        if (!batchStatus.isBatchedStarted) {
+            Database.executeBatch(new NZC_EmissionsMatchingProcurementBatch(), NZC_EmissionsMatchingMTD.emissionsMatchBatchSize);
+            batchStatus = new currentBatchStatus(0,1,true, NZC_EmissionsMatchingConstants.STATUS_BATCH_HOLDING);
+        }
+        return batchStatus;
+    }
+
+    @AuraEnabled
+    public static currentBatchStatus clientPollingProcurementStatus() {
+        return canStartBatch(NZC_EmissionsMatchingConstants.PROCUREMENT_MATCH_BATCH_NAME);
+    }
+
+    @AuraEnabled
     public static currentBatchStatus clientPollingMatchStatus() {
         return canStartBatch(NZC_EmissionsMatchingConstants.EMISSIONS_MATCH_BATCH_NAME);
     }

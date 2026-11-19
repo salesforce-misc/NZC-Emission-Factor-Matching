@@ -1,0 +1,13 @@
+{
+    "name": "nzc-emission-factor-matching",
+    "private": true,
+    "version": "1.0.0",
+    "description": "Jest tooling for the NZC Emission Factor Matching Lightning Web Components",
+    "scripts": {
+        "test": "echo '{\"packageDirectories\":[{\"path\":\"force-app\"}]}' > sfdx-project.json; sfdx-lwc-jest ; rc=$?; rm -f sfdx-project.json; exit $rc",
+        "test:coverage": "echo '{\"packageDirectories\":[{\"path\":\"force-app\"}]}' > sfdx-project.json; sfdx-lwc-jest -- --coverage; rc=$?; rm -f sfdx-project.json; exit $rc"
+    },
+    "devDependencies": {
+        "@salesforce/sfdx-lwc-jest": "^5.1.0"
+    }
+}

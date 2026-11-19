@@ -116,6 +116,18 @@ sfdx force:source:deploy -p force-app -u MyOrg
 
 **Note:** This accelerator is compatible with CI/CD tools like Gearset, Copado, Flosum, and Salesforce DevOps Center.
 
+##### Testing in a scratch org
+
+`config/project-scratch-def.json` creates an Enterprise scratch org with Net Zero Cloud, waste and Scope 3 enabled. The waste setting is required: without it `GeneratedWaste` is read-only, `StnryAssetEnvrSrc.WstDispoEmssnFctrSetId` doesn't exist and the test classes don't compile.
+
+```bash
+sf org create scratch --definition-file config/project-scratch-def.json --target-dev-hub MyDevHub --alias nzc-test --duration-days 7
+sf org assign permsetlicense --name NetZeroCloudUserPsl --name DataProcessingEnginePsl --target-org nzc-test
+sf org assign permset --name NetZeroAdmin --name NetZeroManager --name DataProcessingEngineUser --target-org nzc-test
+```
+
+Deploy the record types and `*Config` metadata (`metadata/record-types` and `metadata/nzc-configs` in the NZC-Assist plugin), assign `NZC_RecordType_Access`, then deploy this repo (`python3 scripts/build-deploy-zip.py`, then `sf project deploy start --metadata-dir NZC-Emission-Factor-Matching-Deploy.zip --single-package --test-level RunLocalTests --target-org nzc-test`). Without the record types, the tests that insert source records fail with "Configure the record types using the setup entities".
+
 #### ⚡ Post-Deployment Configuration
 
 After deploying with any method above, complete these manual steps:
@@ -189,6 +201,21 @@ After deploying with any method above, complete these manual steps:
 3. **Configure** the Object, Fuel Type, and field mappings
 4. **Ensure** both Energy Use and Emissions Set records have matching values in the specified fields
 5. **Test** with a sample record to verify matching works
+
+### 🧭 **Creating Rules with the Wizard**
+
+Add the **nzc_EmissionsMatchingRuleWizard** component to an App, Home or Tab page. The wizard guides you through
+choosing the record type, pairing record fields with emissions factor fields, reviewing warnings (for example
+Allow Custom Tag Matching being off) and saving the rule. It deploys the Custom Match metadata record for you, so no
+manual metadata editing is needed. Users need the `EmissionsMatching` permission set and permission to deploy metadata.
+
+### 🛒 **Scope 3 Procurement Backfill**
+
+Procurement items (`Scope3PcmtItem`) loaded without an emissions factor are linked to a `PcmtEmssnFctrSetItem` using a
+Custom Match rule for `Scope3PcmtItem`. List several fields, comma separated and in the same order on both sides
+(for example `SupplierId,Scope3GhgCategory` on the item -> `Supplier__c,Scope3GhgCategory` on the factor); all must match. If several factors
+share the key, the one with the latest update year not after the item's spend date year wins. Matching runs in the
+`NZC_EmissionsMatchingProcurementTrigger` and in the procurement backfill batch (also reachable from the wizard's last step).
 
 ---
 
