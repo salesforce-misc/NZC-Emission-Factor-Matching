@@ -116,6 +116,18 @@ sfdx force:source:deploy -p force-app -u MyOrg
 
 **Note:** This accelerator is compatible with CI/CD tools like Gearset, Copado, Flosum, and Salesforce DevOps Center.
 
+##### Testing in a scratch org
+
+`config/project-scratch-def.json` creates an Enterprise scratch org with Net Zero Cloud, waste and Scope 3 enabled. The waste setting is required: without it `GeneratedWaste` is read-only, `StnryAssetEnvrSrc.WstDispoEmssnFctrSetId` doesn't exist and the test classes don't compile.
+
+```bash
+sf org create scratch --definition-file config/project-scratch-def.json --target-dev-hub MyDevHub --alias nzc-test --duration-days 7
+sf org assign permsetlicense --name NetZeroCloudUserPsl --name DataProcessingEnginePsl --target-org nzc-test
+sf org assign permset --name NetZeroAdmin --name NetZeroManager --name DataProcessingEngineUser --target-org nzc-test
+```
+
+Deploy the record types and `*Config` metadata (`metadata/record-types` and `metadata/nzc-configs` in the NZC-Assist plugin), assign `NZC_RecordType_Access`, then deploy this repo (`python3 scripts/build-deploy-zip.py`, then `sf project deploy start --metadata-dir NZC-Emission-Factor-Matching-Deploy.zip --single-package --test-level RunLocalTests --target-org nzc-test`). Without the record types, the tests that insert source records fail with "Configure the record types using the setup entities".
+
 #### ⚡ Post-Deployment Configuration
 
 After deploying with any method above, complete these manual steps:

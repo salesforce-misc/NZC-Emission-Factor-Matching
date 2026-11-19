@@ -20,3 +20,9 @@ Bootstrapped from the workspace template while adding Scope 3 procurement backfi
 
 ## [2026-11-04] ingest | Issue 1 root cause
 - Workbench failure = Single Package unchecked; fixed README. Layout referenced two deleted fields; removed. Generator now emits CustomField/ListView.
+
+## [2026-11-12] ingest | Scratch-org deploy test
+- Deployed zip to a new NZC scratch org; added `tabs` to the zip builder; waste field missing in scratch org breaks the test data factory.
+
+## [2026-11-19] ingest | Scratch-org deploy passes
+- Waste setting added to the scratch def; record types needed before tests; 132/132 components, 88 tests pass.

@@ -19,6 +19,7 @@ TYPES = {
     "objects": ("CustomObject", ".object"),
     "layouts": ("Layout", ".layout"),
     "permissionsets": ("PermissionSet", ".permissionset"),
+    "tabs": ("CustomTab", ".tab"),
     "lwc": ("LightningComponentBundle", None),  # one member per bundle folder
 }
 # child elements of a .object file that must also be declared in package.xml as Object.Name

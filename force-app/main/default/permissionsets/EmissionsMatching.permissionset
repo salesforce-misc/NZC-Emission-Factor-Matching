@@ -361,4 +361,8 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>EmissionsMatching</label>
+    <tabSettings>
+        <tab>NZC_EmissionsMatchingRuleWizard</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

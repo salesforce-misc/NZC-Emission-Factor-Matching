@@ -1,16 +1,14 @@
 {
-  "orgName": "Salesforce Project Scratch Org",
-  "edition": "Developer",
-  "features": ["EnableSetPasswordInApi"],
+  "orgName": "NZC Emission Factor Matching Scratch Org",
+  "edition": "Enterprise",
+  "features": ["EnableSetPasswordInApi", "SustainabilityApp", "RecordTypes"],
   "settings": {
-    "lightningExperienceSettings": {
-      "enableS1DesktopEnabled": true
-    },
-    "mobileSettings": {
-      "enableS1EncryptedStoragePref2": false
+    "industriesSettings": {
+      "enableSustainabilityCloud": true,
+      "enableSCCarbonAccounting": true,
+      "enableSCSNGManagement": true,
+      "enableSCWasteManagement": true,
+      "enableSCScope3HubEnabled": true
     }
   }
 }
-
-
-
