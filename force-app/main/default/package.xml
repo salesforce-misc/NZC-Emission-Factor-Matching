@@ -77,6 +77,7 @@
         <members>GroundTravelEnrgyUse</members>
         <members>HotelStayEmssnFctr</members>
         <members>HotelStayEnrgyUse</members>
+        <members>NZC_Accelerators__mdt</members>
         <members>NZC_EmissionsMatchingConfig__c</members>
         <members>NZC_EmissionsMatchingCustomMatch__mdt</members>
         <members>OtherEmssnFctrSet</members>
@@ -98,14 +99,68 @@
         <name>PermissionSet</name>
     </types>
     <types>
+        <members>NZC_EmissionsMatchingRuleWizard</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
         <members>nzc_EmissionsMatchingBatchStart</members>
         <members>nzc_EmissionsMatchingRuleWizard</members>
         <members>nzc_EmissionsRecalcBatchStart</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>NZC_EmissionsMatchingRuleWizard</members>
-        <name>CustomTab</name>
+        <members>AirTravelEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>AirTravelEmssnFctr.MasterEmissionsSet__c</members>
+        <members>AirTravelEmssnFctr.Recalculate_Emissions__c</members>
+        <members>AirTravelEnrgyUse.Recalculate_Emissions__c</members>
+        <members>ElectricityEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
+        <members>ElectricityEmssnFctrSet.MasterEmissionsSet__c</members>
+        <members>ElectricityEmssnFctrSet.Recalculate_Emissions__c</members>
+        <members>FrgtHaulingEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>FrgtHaulingEmssnFctr.MasterEmissionsSet__c</members>
+        <members>FrgtHaulingEmssnFctr.Recalculate_Emissions__c</members>
+        <members>FrgtHaulingEnrgyUse.Recalculate_Emissions__c</members>
+        <members>GeneratedWaste.Recalculate_Emissions__c</members>
+        <members>GroundTravelEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>GroundTravelEmssnFctr.MasterEmissionsSet__c</members>
+        <members>GroundTravelEmssnFctr.Recalculate_Emissions__c</members>
+        <members>GroundTravelEnrgyUse.Recalculate_Emissions__c</members>
+        <members>HotelStayEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>HotelStayEmssnFctr.MasterEmissionsSet__c</members>
+        <members>HotelStayEmssnFctr.Recalculate_Emissions__c</members>
+        <members>HotelStayEnrgyUse.Recalculate_Emissions__c</members>
+        <members>NZC_Accelerators__mdt.NZC_EFM__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.AllowCustomTagMatching__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.DateMatchingField__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.DoMatchEmissionsOnInsert__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.DoMatchEmissionsOnUpdate__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.Emissions_Matching_Batch_Size__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.Emissions_Recalc_Batch_Size__c</members>
+        <members>NZC_EmissionsMatchingConfig__c.doLog__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.EmissionsSetFieldToMatch__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.EnergyUseFieldToMatch__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.FuelType__c</members>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.ObjectAppliesTo__c</members>
+        <members>OtherEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
+        <members>OtherEmssnFctrSet.MasterEmissionsSet__c</members>
+        <members>OtherEmssnFctrSet.Recalculate_Emissions__c</members>
+        <members>RefrigerantEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>RefrigerantEmssnFctr.MasterEmissionsSet__c</members>
+        <members>RefrigerantEmssnFctr.Recalculate_Emissions__c</members>
+        <members>RentalCarEmssnFctr.EmissionsFactorUpdateYear__c</members>
+        <members>RentalCarEmssnFctr.MasterEmissionsSet__c</members>
+        <members>RentalCarEmssnFctr.Recalculate_Emissions__c</members>
+        <members>RentalCarEnrgyUse.Recalculate_Emissions__c</members>
+        <members>StnryAssetEnrgyUse.Recalculate_Emissions__c</members>
+        <members>VehicleAssetEnrgyUse.Recalculate_Emissions__c</members>
+        <members>WstDispoEmssnFctrSet.EmissionsFactorUpdateYear__c</members>
+        <members>WstDispoEmssnFctrSet.MasterEmissionsSet__c</members>
+        <members>WstDispoEmssnFctrSet.Recalculate_Emissions__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>NZC_EmissionsMatchingCustomMatch__mdt.All_Records_with_All_Fields</members>
+        <name>ListView</name>
     </types>
     <version>65.0</version>
 </Package>
